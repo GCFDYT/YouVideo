@@ -33,7 +33,7 @@ public class ArrayClass<E> implements Array<E> {
 
     /**
      * Constructs an empty array with the specified initial capacity.
-     * @param dimension the initial capacity of the array
+     * @param: dimension the initial capacity of the array
      */
 	@SuppressWarnings("unchecked")
 	public ArrayClass(int dimention) {
