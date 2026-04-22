@@ -5,30 +5,30 @@ import java.util.Scanner;
 public class Main {
     // Command names:
 
-    // General
-    public static final String SHOW_CMD_LIST = "help";
-    public static final String EXIT_PROGRAM = "exit";
-
     // Video + Subtitles
     public static final String CREATE_PUBLISHABLE_VIDEO = "createpublishable";
     public static final String CREATE_PREMIUM_VIDEO = "createpremium";
     public static final String ADD_SUBTITLES_PREMIUM_VIDEO = "addsubtitle";
-    public static final String SHOW_VIDEO_SUBTITLES_LIST = "subtitles";
-    public static final String SHOW_VIDEO_DATA = "getvideo";
+    public static final String DISPLAY_VIDEO_DATA = "getvideo";
+    public static final String DISPLAY_VIDEO_SUBTITLES_LIST = "subtitles";
     public static final String DELETE_VIDEO = "removevideo";
 
     // Podcast + Episodes
     public static final String CREATE_PODCAST = "createpodcast";
-    public static final String CREATE_PODCAST_EPISODE = "addepisode";
-    public static final String SHOW_PODCAST_DATA = "getpodcast";
-    public static final String SHOW_PODCAST_EPISODE_LIST = "episodes";
-    public static final String SHOW_AUTHOR_PODCAST_LIST = "authorpodcasts";
-    public static final String DELETE_PODCASTS = "removepodcast";
+    public static final String ADD_PODCAST_EPISODE = "addepisode";
+    public static final String DISPLAY_PODCAST_DATA = "getpodcast";
+    public static final String DISPLAY_PODCAST_EPISODE_LIST = "episodes";
+    public static final String DISPLAY_AUTHOR_PODCAST_LIST = "authorpodcasts";
+    public static final String DELETE_PODCAST = "removepodcast";
 
     // Show
     public static final String CREATE_SHOW = "createshow";
-    public static final String SHOW_SHOW_DATA = "getshow";
+    public static final String DISPLAY_SHOW_DATA = "getshow";
     public static final String DELETE_SHOW = "removeshow";
+
+    // General
+    public static final String DISPLAY_CMD_LIST = "help";
+    public static final String EXIT_PROGRAM = "exit";
 
     // Output messages related to commands:
 
@@ -37,23 +37,23 @@ public class Main {
     public static final String EXIT_MSG = "Bye!";
 
     // Help
-    public static final String HELP_MSG = "createpublishable - creates a new publishable video\n" +
-            "createpremium - creates a new publishable Premium video\n" +
-            "addsubtitle - adds subtitle to Premium video\n" +
-            "getvideo - presents publishable video data from its id\n" +
-            "subtitles - Lists Premium video subtitles\n" +
-            "createpodcast - creates a new podcast with no episodes\n" +
-            "addepisode - adds an episode to a podcast\n" +
-            "getpodcast - presents podcast data from its title\n" +
-            "episodes - List podcast episodes\n" +
-            "authorpodcasts - List all podcasts of an author\n" +
-            "removepodcast - removes a podcast\n" +
-            "createshow - creates show using an existing publishable video\n" +
-            "getshow - presents show data from its title\n" +
-            "removeshow - removes a show\n" +
-            "removevideo - removes a publishable video\n" +
-            "help - shows the available commands\n" +
-            "exit - terminates the execution of the program";
+    public static final String HELP_MSG = CREATE_PUBLISHABLE_VIDEO + " - creates a new publishable video\n" +
+            CREATE_PREMIUM_VIDEO  + " - creates a new publishable Premium video\n" +
+            ADD_SUBTITLES_PREMIUM_VIDEO + " - adds subtitle to Premium video\n" +
+            DISPLAY_VIDEO_DATA + " - presents publishable video data from its id\n" +
+            DISPLAY_VIDEO_SUBTITLES_LIST + " - Lists Premium video subtitles\n" +
+            CREATE_PODCAST + " - creates a new podcast with no episodes\n" +
+            ADD_PODCAST_EPISODE + " - adds an episode to a podcast\n" +
+            DISPLAY_PODCAST_DATA + " - presents podcast data from its title\n" +
+            DISPLAY_PODCAST_EPISODE_LIST + " - List podcast episodes\n" +
+            DISPLAY_AUTHOR_PODCAST_LIST + " - List all podcasts of an author\n" +
+            DELETE_PODCAST + " - removes a podcast\n" +
+            CREATE_SHOW + " - creates show using an existing publishable video\n" +
+            DISPLAY_SHOW_DATA + " - presents show data from its title\n" +
+            DELETE_SHOW + " - removes a show\n" +
+            DELETE_VIDEO + " - removes a publishable video\n" +
+            DISPLAY_CMD_LIST + " - shows the available commands\n" +
+            EXIT_PROGRAM + " - terminates the execution of the program";
 
     // Video + Subtitles
     public static final String VIDEO_CREATED = "Video %s created successfully.";
@@ -108,19 +108,19 @@ public class Main {
                 case CREATE_PUBLISHABLE_VIDEO -> createPublishableVideo(scanner, platform);
                 case CREATE_PREMIUM_VIDEO -> createPremiumVideo(scanner, platform);
                 case ADD_SUBTITLES_PREMIUM_VIDEO -> createSubtitle(scanner, platform);
-                case SHOW_VIDEO_SUBTITLES_LIST -> showVideoSubtitleList(scanner, platform);
-                case SHOW_VIDEO_DATA -> showVideoData(scanner, platform);
+                case DISPLAY_VIDEO_SUBTITLES_LIST -> displayVideoSubtitleList(scanner, platform);
+                case DISPLAY_VIDEO_DATA -> displayVideoData(scanner, platform);
                 case DELETE_VIDEO -> deleteVideo(scanner, platform);
                 case CREATE_PODCAST -> createPodcast(scanner, platform);
-                case CREATE_PODCAST_EPISODE -> createPodcastEpisode(scanner, platform);
-                case SHOW_PODCAST_DATA -> showPodcastData(scanner, platform);
-                case SHOW_PODCAST_EPISODE_LIST -> showPodcastEpisodes(scanner, platform);
-                case SHOW_AUTHOR_PODCAST_LIST -> showAuthorPodcastList(scanner, platform);
-                case DELETE_PODCASTS -> deletePodcast(scanner, platform);
+                case ADD_PODCAST_EPISODE -> createPodcastEpisode(scanner, platform);
+                case DISPLAY_PODCAST_DATA -> displayPodcastData(scanner, platform);
+                case DISPLAY_PODCAST_EPISODE_LIST -> displayPodcastEpisodes(scanner, platform);
+                case DISPLAY_AUTHOR_PODCAST_LIST -> displayAuthorPodcastList(scanner, platform);
+                case DELETE_PODCAST -> deletePodcast(scanner, platform);
                 case CREATE_SHOW -> createShow(scanner, platform);
-                case SHOW_SHOW_DATA -> showShowData(scanner, platform);
+                case DISPLAY_SHOW_DATA -> displayShowData(scanner, platform);
                 case DELETE_SHOW -> deleteShow(scanner, platform);
-                case SHOW_CMD_LIST -> System.out.println(HELP_MSG);
+                case DISPLAY_CMD_LIST -> System.out.println(HELP_MSG);
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
                 default -> System.out.println(CMD_ERR);
             }
@@ -132,7 +132,7 @@ public class Main {
         platform.removeShow(title);
     }
 
-    private static void showShowData(Scanner scanner, StreamingPlatform platform) {
+    private static void displayShowData(Scanner scanner, StreamingPlatform platform) {
         String title =  scanner.nextLine();
         platform.getShow(title);
     }
@@ -149,17 +149,17 @@ public class Main {
         platform.removePodcast(title);
     }
 
-    private static void showAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
+    private static void displayAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
         String author = scanner.nextLine();
         platform.getAuthorPodcasts(author);
     }
 
-    private static void showPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
+    private static void displayPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
         String title = scanner.nextLine();
         platform.getPodcastEpisodes(title);
     }
 
-    private static void showPodcastData(Scanner scanner, StreamingPlatform platform) {
+    private static void displayPodcastData(Scanner scanner, StreamingPlatform platform) {
         String title = scanner.nextLine();
         platform.getPodcast(title);
     }
@@ -185,12 +185,12 @@ public class Main {
         platform.removeVideo(videoId);
     }
 
-    private static void showVideoData(Scanner scanner, StreamingPlatform platform) {
+    private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
         String videoId = scanner.next(); scanner.nextLine();
         platform.getVideo(videoId);
     }
 
-    private static void showVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
+    private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
         String videoId = scanner.next(); scanner.nextLine();
         platform.getSubtitleList(videoId);
     }

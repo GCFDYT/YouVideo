@@ -1,6 +1,6 @@
 package Core;
 
-public class PublishableVideo extends Video{
+public class PublishableVideo extends Video {
 
     private final String url;
     private final String publisher;
@@ -41,5 +41,4 @@ public class PublishableVideo extends Video{
     public String getLanguage() {
         return language;
     }
-
 }
