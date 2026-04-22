@@ -1,4 +1,4 @@
 package Core;
 
-public class Podcast {
+public interface Podcast {
 }

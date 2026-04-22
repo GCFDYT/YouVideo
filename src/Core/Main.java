@@ -1,11 +1,12 @@
 package Core;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     // Command names:
 
-    // Video + Subtitles
+    // Core.Video + Subtitles
     public static final String CREATE_PUBLISHABLE_VIDEO = "createpublishable";
     public static final String CREATE_PREMIUM_VIDEO = "createpremium";
     public static final String ADD_SUBTITLES_PREMIUM_VIDEO = "addsubtitle";
@@ -55,23 +56,23 @@ public class Main {
             DISPLAY_CMD_LIST + " - shows the available commands\n" +
             EXIT_PROGRAM + " - terminates the execution of the program";
 
-    // Video + Subtitles
-    public static final String VIDEO_CREATED = "Video %s created successfully.";
+    // Core.Video + Subtitles
+    public static final String VIDEO_CREATED = "Core.Video %s created successfully.";
     public static final String INV_LANGUAGE = "Invalid language type.";
     public static final String INV_VALUE = "Invalid value.";
-    public static final String VIDEO_ID_EXISTS = "Video with this ID already exists.";
-    public static final String PUBLISHABLE_NOT_FOUND = "Publishable Video %s does not exist.";
-    public static final String PREMIUM_VIDEO_CREATED = "PREMIUM Video %s created successfully.";
+    public static final String VIDEO_ID_EXISTS = "Core.Video with this ID already exists.";
+    public static final String PUBLISHABLE_NOT_FOUND = "Publishable Core.Video %s does not exist.";
+    public static final String PREMIUM_VIDEO_CREATED = "PREMIUM Core.Video %s created successfully.";
     public static final String INV_SUBTITLE = "Invalid language type in subtitle.";
-    public static final String VIDEO_REMOVED = "Video removed successfully.";
+    public static final String VIDEO_REMOVED = "Core.Video removed successfully.";
     public static final String CANT_REMOVE_EPISODE = "Cannot remove: video is an episode of a podcast.";
     public static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: video is used in a show.";
     public static final String SUBTITLE_ADDED = "Subtitle added successfully.";
-    public static final String VIDEO_NOT_FOUND = "Video does not exist.";
+    public static final String VIDEO_NOT_FOUND = "Core.Video does not exist.";
     public static final String NOT_PREMIUM = "This operation requires a Premium video.";
     public static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     public static final String SUBTITLE_ENTRY = "- %s (%s)";
-    public static final String NO_PREMIUM_VIDEO = "No Premium Video with ID.";
+    public static final String NO_PREMIUM_VIDEO = "No Premium Core.Video with ID.";
 
     // Podcast + Episodes
     public static final String PODCAST_CREATED = "Podcast created successfully.";
@@ -93,10 +94,10 @@ public class Main {
 
     // Show
     public static final String SHOW_CREATED = "Show created successfully.";
-    public static final String SHOW_NOT_FOUND = "Video for show does not exist.";
+    public static final String SHOW_NOT_FOUND = "Core.Video for show does not exist.";
     public static final String SHOW_EXISTS = "Show with this title already exists.";
     public static final String SHOW_INFO = "Show Date: %s Author: %s";
-    public static final String SHOW_VIDEO = "Video: %s";
+    public static final String SHOW_VIDEO = "Core.Video: %s";
     public static final String SHOW_FALSE = "Show does not exist.";
     public static final String SHOW_REMOVED = "Show removed successfully.";
 
