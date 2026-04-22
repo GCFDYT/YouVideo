@@ -15,6 +15,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
         shows = new ArrayClass();
     }
 
+    @Override
     public void addPublishableVideo(String videoId, int videoDuration, String url, String publisher, String title, String language) {
 
     }
