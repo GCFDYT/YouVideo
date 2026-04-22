@@ -2,9 +2,9 @@ package Core;
 
 public interface Podcast {
 
-    String getTitle();
+    String title();
 
-    String getAuthor();
+    String author();
 
-    String getLanguageCode();
+    String languageCode();
 }

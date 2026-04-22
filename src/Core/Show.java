@@ -2,9 +2,9 @@ package Core;
 
 public interface Show {
 
-    String getAuthor();
+    String author();
 
-    String getTitle();
+    String title();
 
-    String getDate();
+    String date();
 }

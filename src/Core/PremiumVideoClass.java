@@ -1,19 +1,32 @@
 package Core;
 
+import dataStructures.Array;
+import dataStructures.ArrayClass;
+
+
 public class PremiumVideoClass extends PublishableVideoClass implements PremiumVideo{
 
-    private final Subtitle subtitle;
+    private final Array subtitles;
 
     public PremiumVideoClass(String videoId, int videoDuration, String url, String publisher,
-                             String title, String language, String subtitleUrl, Subtitle subtitle) {
+                             String title, String language, String subtitleUrl, String subtitleLanguageCode) {
 
         super(videoId,videoDuration, url, publisher, title, language);
 
-        this.subtitle = subtitle;
+        subtitles = new ArrayClass();
+
+        Subtitle subtitle = new Subtitle(subtitleUrl, subtitleLanguageCode);
+
+        subtitles.insertLast(subtitle);
     }
 
     @Override
-    public Subtitle getSubtitle() {
-        return subtitle;
+    public void addSubtitle(Subtitle newSubtitle) {
+        subtitles.insertLast(newSubtitle);
+    }
+
+    @Override
+    public Array getSubtitles() {
+        return subtitles;
     }
 }
