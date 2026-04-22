@@ -14,17 +14,17 @@ public interface StreamingPlatform {
 
     void addPodcast(String title, String author, String language);
 
-    void addEpisode(String title, String videoId, int videoDuration, String episodeUrl, String date);
+    void addPodcastEpisode(String title, String videoId, int videoDuration, String url, String date);
 
     void getPodcast(String title);
 
-    void getEpisodes(String title);
+    void getPodcastEpisodes(String title);
 
     void getAuthorPodcasts(String author);
 
     void removePodcast(String title);
 
-    void createShow(String author, String videoId, String date);
+    void addShow(String author, String videoId, String date);
 
     void getShow(String title);
 
