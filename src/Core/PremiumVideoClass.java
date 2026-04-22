@@ -12,6 +12,7 @@ public class PremiumVideoClass extends PublishableVideoClass implements PremiumV
         this.subtitle = subtitle;
     }
 
+    @Override
     public Subtitle getSubtitle() {
         return subtitle;
     }

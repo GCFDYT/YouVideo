@@ -4,31 +4,27 @@ public class PublishableVideoClass extends AbstractVideoClass implements Publish
 
     private final String url;
     private final String publisher;
-    private final String title;
     private final String language;
 
     public PublishableVideoClass(String videoId, int videoDuration, String url, String publisher, String title, String language) {
-        super(videoId, videoDuration);
+        super(videoId, title, videoDuration);
 
         this.url = url;
         this.publisher = publisher;
-        this.title = title;
         this.language = language;
     }
 
-
+    @Override
     public String getUrl() {
         return url;
     }
 
+    @Override
     public String getPublisher() {
         return publisher;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
+    @Override
     public String getLanguage() {
         return language;
     }

@@ -6,7 +6,5 @@ public interface PublishableVideo extends AbstractVideo {
 
     String getPublisher();
 
-    String getTitle();
-
     String getLanguage();
 }
