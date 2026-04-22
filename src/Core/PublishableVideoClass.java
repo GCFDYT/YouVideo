@@ -16,15 +16,6 @@ public class PublishableVideoClass extends AbstractVideoClass implements Publish
         this.language = language;
     }
 
-    @Override
-    public String getVideoId() {
-        return super.getVideoId();
-    }
-
-    @Override
-    public int getVideoDuration() {
-        return super.getVideoDuration();
-    }
 
     public String getUrl() {
         return url;

@@ -3,19 +3,19 @@ package Core;
 public interface StreamingPlatform {
 
     void addPublishableVideo(String videoId, int videoDuration, String url, String publisher,
-                             String title, String language);
+                             String title, String languageCode);
 
     void addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
-                         String title, String language, String subtitleUrl,
-                         String subtitleLanguage);
+                         String title, String languageCode, String subtitleUrl,
+                         String subtitleLanguageCode);
 
-    void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguage);
+    void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode);
 
     void getSubtitleList(String videoId);
 
     void getVideo(String videoId);
 
-    void addPodcast(String title, String author, String language);
+    void addPodcast(String title, String author, String languageCode);
 
     void addPodcastEpisode(String title, String videoId, int videoDuration, String url, String date);
 

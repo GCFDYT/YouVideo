@@ -16,17 +16,17 @@ public class StreamingPlatformClass implements StreamingPlatform{
     }
 
     @Override
-    public void addPublishableVideo(String videoId, int videoDuration, String url, String publisher, String title, String language) {
+    public void addPublishableVideo(String videoId, int videoDuration, String url, String publisher, String title, String languageCode) {
 
     }
 
     @Override
-    public void addPremiumVideo(String videoId, int videoDuration, String url, String publisher, String title, String language, String subtitleUrl, String subtitleLanguage) {
+    public void addPremiumVideo(String videoId, int videoDuration, String url, String publisher, String title, String languageCode, String subtitleUrl, String subtitleLanguageCode) {
 
     }
 
     @Override
-    public void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguage) {
+    public void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode) {
 
     }
 
@@ -41,7 +41,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
     }
 
     @Override
-    public void addPodcast(String title, String author, String language) {
+    public void addPodcast(String title, String author, String languageCode) {
 
     }
 

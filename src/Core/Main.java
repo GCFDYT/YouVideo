@@ -177,8 +177,8 @@ public class Main {
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
         String title = scanner.nextLine();
         String author = scanner.nextLine();
-        String language = scanner.next(); scanner.nextLine();
-        platform.addPodcast(title, author, language);
+        String languageCode = scanner.next(); scanner.nextLine();
+        platform.addPodcast(title, author, languageCode);
     }
 
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
@@ -198,8 +198,8 @@ public class Main {
 
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
         String videoId = scanner.next(); String subtitleUrl = scanner.next(); scanner.nextLine();
-        String subtitleLanguage = scanner.next(); scanner.nextLine();
-        platform.addSubtitle(videoId, subtitleUrl, subtitleLanguage);
+        String subtitleLanguageCode = scanner.next(); scanner.nextLine();
+        platform.addSubtitle(videoId, subtitleUrl, subtitleLanguageCode);
     }
 
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
@@ -208,10 +208,10 @@ public class Main {
 
         String publisher = scanner.nextLine();
         String title = scanner.nextLine();
-        String language = scanner.next(); scanner.nextLine();
+        String languageCode = scanner.next(); scanner.nextLine();
         String subtitleUrl = scanner.next(); scanner.nextLine();
-        String subtitleLanguage = scanner.next(); scanner.nextLine();
-        platform.addPremiumVideo(videoId, videoDuration, url, publisher, title, language, subtitleUrl, subtitleLanguage);
+        String subtitleLanguageCode = scanner.next(); scanner.nextLine();
+        platform.addPremiumVideo(videoId, videoDuration, url, publisher, title, languageCode, subtitleUrl, subtitleLanguageCode);
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
@@ -220,8 +220,8 @@ public class Main {
 
         String publisher = scanner.nextLine();
         String title = scanner.nextLine();
-        String language = scanner.next(); scanner.nextLine();
-        platform.addPublishableVideo(videoId, videoDuration, url, publisher, title, language);
+        String languageCode = scanner.next(); scanner.nextLine();
+        platform.addPublishableVideo(videoId, videoDuration, url, publisher, title, languageCode);
     }
 
     public static void main(String[] args) {

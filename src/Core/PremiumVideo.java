@@ -1,4 +1,6 @@
 package Core;
 
-public class PremiumVideo {
+public interface PremiumVideo extends PublishableVideo{
+
+    Subtitle getSubtitle();
 }
