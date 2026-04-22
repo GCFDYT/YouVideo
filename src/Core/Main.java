@@ -37,7 +37,7 @@ public class Main {
     public static final String EXIT_MSG = "Bye!";
 
     // Help
-    public static final String HELP_MSG = "createpublishable - creates a new publishable videoê\n" +
+    public static final String HELP_MSG = "createpublishable - creates a new publishable video\n" +
             "createpremium - creates a new publishable Premium video\n" +
             "addsubtitle - adds subtitle to Premium video\n" +
             "getvideo - presents publishable video data from its id\n" +
@@ -181,7 +181,7 @@ public class Main {
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
-        String videoId = scanner.next(); int videoDuration = scanner.next();
+        String videoId = scanner.next(); int videoDuration = scanner.nextInt();
         String url = scanner.next(); scanner.nextLine();
 
         String publisher = scanner.nextLine();
