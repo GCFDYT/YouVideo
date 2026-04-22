@@ -22,7 +22,7 @@ public class Main {
     public static final String CREATE_PODCAST_EPISODE = "addepisode";
     public static final String SHOW_PODCAST_DATA = "getpodcast";
     public static final String SHOW_PODCAST_EPISODE_LIST = "episodes";
-    public static final String SHOW_USER_PODCASTS_LIST = "authorpodcasts";
+    public static final String SHOW_AUTHOR_PODCAST_LIST = "authorpodcasts";
     public static final String DELETE_PODCASTS = "removepodcast";
 
     // Show
@@ -115,7 +115,7 @@ public class Main {
                 case CREATE_PODCAST_EPISODE -> createPodcastEpisode(scanner, platform);
                 case SHOW_PODCAST_DATA -> showPodcastData(scanner, platform);
                 case SHOW_PODCAST_EPISODE_LIST -> showPodcastEpisodes(scanner, platform);
-                case SHOW_USER_PODCASTS_LIST -> showUserPodcastList(scanner, platform);
+                case SHOW_AUTHOR_PODCAST_LIST -> showAuthorPodcastList(scanner, platform);
                 case DELETE_PODCASTS -> deletePodcast(scanner, platform);
                 case CREATE_SHOW -> createShow(scanner, platform);
                 case SHOW_SHOW_DATA -> showShowData(scanner, platform);
@@ -128,45 +128,66 @@ public class Main {
     }
 
     private static void deleteShow(Scanner scanner, StreamingPlatform platform) {
+        String title = scanner.nextLine();
+        platform.removeShow(title);
     }
 
     private static void showShowData(Scanner scanner, StreamingPlatform platform) {
-        
+        String title =  scanner.nextLine();
+        platform.getShow(title);
     }
 
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
-        
+        String author = scanner.nextLine();
+        String videoId = scanner.next(); scanner.nextLine();
+        String date = scanner.next(); scanner.nextLine();
+        platform.addShow(author, videoId, date);
     }
 
     private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
-        
+        String title = scanner.nextLine();
+        platform.removePodcast(title);
     }
 
-    private static void showUserPodcastList(Scanner scanner, StreamingPlatform platform) {
-        
+    private static void showAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
+        String author = scanner.nextLine();
+        platform.getAuthorPodcasts(author);
     }
 
     private static void showPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
+        String title = scanner.nextLine();
+        platform.getPodcastEpisodes(title);
     }
 
     private static void showPodcastData(Scanner scanner, StreamingPlatform platform) {
-        
+        String title = scanner.nextLine();
+        platform.getPodcast(title);
     }
 
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
-        
+        String title = scanner.nextLine();
+        String videoId = scanner.next(); scanner.nextLine();
+        int videoDuration = scanner.nextInt();
+        String url = scanner.next(); scanner.nextLine();
+        String date = scanner.next(); scanner.nextLine();
+        platform.addPodcastEpisode(title, videoId, videoDuration, url, date);
     }
 
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
-        
+        String title = scanner.nextLine();
+        String author = scanner.nextLine();
+        String language = scanner.next(); scanner.nextLine();
+        platform.addPodcast(title, author, language);
     }
 
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
-        
+        String videoId = scanner.next(); scanner.nextLine();
+        platform.removeVideo(videoId);
     }
 
     private static void showVideoData(Scanner scanner, StreamingPlatform platform) {
-        
+        String videoId = scanner.next(); scanner.nextLine();
+        platform.getVideo(videoId);
     }
 
     private static void showVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {

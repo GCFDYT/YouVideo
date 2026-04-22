@@ -15,6 +15,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
         shows = new ArrayClass();
     }
 
+    @Override
     public void addPublishableVideo(String videoId, int videoDuration, String url, String publisher, String title, String language) {
 
     }
@@ -45,7 +46,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
     }
 
     @Override
-    public void addEpisode(String title, String videoId, int videoDuration, String episodeUrl, String date) {
+    public void addPodcastEpisode(String title, String videoId, int videoDuration, String episodeUrl, String date) {
 
     }
 
@@ -55,7 +56,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
     }
 
     @Override
-    public void getEpisodes(String title) {
+    public void getPodcastEpisodes(String title) {
 
     }
 
@@ -70,7 +71,7 @@ public class StreamingPlatformClass implements StreamingPlatform{
     }
 
     @Override
-    public void createShow(String author, String videoId, String date) {
+    public void addShow(String author, String videoId, String date) {
 
     }
 
