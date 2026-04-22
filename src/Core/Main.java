@@ -108,7 +108,7 @@ public class Main {
                 case CREATE_PUBLISHABLE_VIDEO -> createPublishableVideo(scanner, platform);
                 case CREATE_PREMIUM_VIDEO -> createPremiumVideo(scanner, platform);
                 case ADD_SUBTITLES_PREMIUM_VIDEO -> createSubtitle(scanner, platform);
-                case SHOW_VIDEO_SUBTITLES_LIST -> showVideoSubtitleList(platform);
+                case SHOW_VIDEO_SUBTITLES_LIST -> showVideoSubtitleList(scanner, platform);
                 case SHOW_VIDEO_DATA -> showVideoData(scanner, platform);
                 case DELETE_VIDEO -> deleteVideo(scanner, platform);
                 case CREATE_PODCAST -> createPodcast(scanner, platform);
@@ -169,15 +169,27 @@ public class Main {
         
     }
 
-    private static void showVideoSubtitleList(StreamingPlatform platform) {
-        
+    private static void showVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
+        String videoId = scanner.next(); scanner.nextLine();
+        platform.getSubtitleList(videoId);
     }
 
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
-        
+        String videoId = scanner.next(); String subtitleUrl = scanner.next(); scanner.nextLine();
+        String subtitleLanguage = scanner.next(); scanner.nextLine();
+        platform.addSubtitle(videoId, subtitleUrl, subtitleLanguage);
     }
 
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
+        String videoId = scanner.next(); int videoDuration = scanner.nextInt();
+        String url = scanner.next(); scanner.nextLine();
+
+        String publisher = scanner.nextLine();
+        String title = scanner.nextLine();
+        String language = scanner.next(); scanner.nextLine();
+        String subtitleUrl = scanner.next(); scanner.nextLine();
+        String subtitleLanguage = scanner.next(); scanner.nextLine();
+        platform.addPremiumVideo(videoId, videoDuration, url, publisher, title, language, subtitleUrl, subtitleLanguage);
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {

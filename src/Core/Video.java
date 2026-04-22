@@ -1,4 +1,4 @@
 package Core;
 
-public class Video {
+public abstract class Video {
 }
