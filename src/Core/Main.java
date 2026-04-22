@@ -147,7 +147,6 @@ public class Main {
     }
 
     private static void showPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
-        
     }
 
     private static void showPodcastData(Scanner scanner, StreamingPlatform platform) {
@@ -182,12 +181,19 @@ public class Main {
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
+        String videoId = scanner.next(); int videoDuration = scanner.next();
+        String url = scanner.next(); scanner.nextLine();
 
+        String publisher = scanner.nextLine();
+        String title = scanner.nextLine();
+        String language = scanner.next(); scanner.nextLine();
+        platform.addPublishableVideo(videoId, videoDuration, url, publisher, title, language);
     }
 
     public static void main(String[] args) {
         StreamingPlatform platform = new StreamingPlatformClass();
         Scanner scanner = new Scanner(System.in);
         runProgram(scanner, platform);
+        scanner.close();
     }
 }
