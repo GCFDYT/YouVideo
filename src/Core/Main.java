@@ -1,31 +1,33 @@
 package Core;
 
+import java.util.Scanner;
+
 public class Main {
     // Command names:
 
     // General
-    public static final String CMD_LIST = "help";
+    public static final String SHOW_CMD_LIST = "help";
     public static final String EXIT_PROGRAM = "exit";
 
     // Video + Subtitles
-    public static final String PUBLISHABLE_VIDEO = "createpublishable";
-    public static final String PREMIUM_VIDEO = "createpremium";
-    public static final String SUBTITLES_PREMIUM_VIDEO = "addsubtitle";
-    public static final String SUBTITLES_LIST = "subtitles";
-    public static final String VIDEO_DATA = "getvideo";
+    public static final String CREATE_PUBLISHABLE_VIDEO = "createpublishable";
+    public static final String CREATE_PREMIUM_VIDEO = "createpremium";
+    public static final String ADD_SUBTITLES_PREMIUM_VIDEO = "addsubtitle";
+    public static final String SHOW_VIDEO_SUBTITLES_LIST = "subtitles";
+    public static final String SHOW_VIDEO_DATA = "getvideo";
     public static final String DELETE_VIDEO = "removevideo";
 
     // Podcast + Episodes
-    public static final String PODCAST = "createpodcast";
-    public static final String PODCAST_EPISODE = "addepisode";
-    public static final String PODCAST_DATA = "getpodcast";
-    public static final String PODCAST_EPISODE_LIST = "episodes";
-    public static final String USER_PODCASTS_LIST = "authorpodcasts";
+    public static final String CREATE_PODCAST = "createpodcast";
+    public static final String CREATE_PODCAST_EPISODE = "addepisode";
+    public static final String SHOW_PODCAST_DATA = "getpodcast";
+    public static final String SHOW_PODCAST_EPISODE_LIST = "episodes";
+    public static final String SHOW_USER_PODCASTS_LIST = "authorpodcasts";
     public static final String DELETE_PODCASTS = "removepodcast";
 
     // Show
-    public static final String SHOW = "createshow";
-    public static final String SHOW_DATA = "getshow";
+    public static final String CREATE_SHOW = "createshow";
+    public static final String SHOW_SHOW_DATA = "getshow";
     public static final String DELETE_SHOW = "removeshow";
 
     // Output messages related to commands:
@@ -35,7 +37,23 @@ public class Main {
     public static final String EXIT_MSG = "Bye!";
 
     // Help
-    public static final String HELP_HEADER = "Available commands:";
+    public static final String HELP_MSG = "createpublishable - creates a new publishable video\n" +
+            "createpremium - creates a new publishable Premium video\n" +
+            "addsubtitle - adds subtitle to Premium video\n" +
+            "getvideo - presents publishable video data from its id\n" +
+            "subtitles - Lists Premium video subtitles\n" +
+            "createpodcast - creates a new podcast with no episodes\n" +
+            "addepisode - adds an episode to a podcast\n" +
+            "getpodcast - presents podcast data from its title\n" +
+            "episodes - List podcast episodes\n" +
+            "authorpodcasts - List all podcasts of an author\n" +
+            "removepodcast - removes a podcast\n" +
+            "createshow - creates show using an existing publishable video\n" +
+            "getshow - presents show data from its title\n" +
+            "removeshow - removes a show\n" +
+            "removevideo - removes a publishable video\n" +
+            "help - shows the available commands\n" +
+            "exit - terminates the execution of the program";
 
     // Video + Subtitles
     public static final String VIDEO_CREATED = "Video %s created successfully.";
@@ -81,4 +99,101 @@ public class Main {
     public static final String SHOW_VIDEO = "Video: %s";
     public static final String SHOW_FALSE = "Show does not exist.";
     public static final String SHOW_REMOVED = "Show removed successfully.";
+
+    public static void runProgram(Scanner scanner, StreamingPlatform platform) {
+        String command;
+        do {
+            command = scanner.next();
+            switch (command)  {
+                case CREATE_PUBLISHABLE_VIDEO -> createPublishableVideo(scanner, platform);
+                case CREATE_PREMIUM_VIDEO -> createPremiumVideo(scanner, platform);
+                case ADD_SUBTITLES_PREMIUM_VIDEO -> createSubtitle(scanner, platform);
+                case SHOW_VIDEO_SUBTITLES_LIST -> showVideoSubtitleList(platform);
+                case SHOW_VIDEO_DATA -> showVideoData(scanner, platform);
+                case DELETE_VIDEO -> deleteVideo(scanner, platform);
+                case CREATE_PODCAST -> createPodcast(scanner, platform);
+                case CREATE_PODCAST_EPISODE -> createPodcastEpisode(scanner, platform);
+                case SHOW_PODCAST_DATA -> showPodcastData(scanner, platform);
+                case SHOW_PODCAST_EPISODE_LIST -> showPodcastEpisodes(scanner, platform);
+                case SHOW_USER_PODCASTS_LIST -> showUserPodcastList(scanner, platform);
+                case DELETE_PODCASTS -> deletePodcast(scanner, platform);
+                case CREATE_SHOW -> createShow(scanner, platform);
+                case SHOW_SHOW_DATA -> showShowData(scanner, platform);
+                case DELETE_SHOW -> deleteShow(scanner, platform);
+                case SHOW_CMD_LIST -> System.out.println(HELP_MSG);
+                case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
+                default -> System.out.println(CMD_ERR);
+            }
+        } while (!EXIT_PROGRAM.equals(command));
+    }
+
+    private static void deleteShow(Scanner scanner, StreamingPlatform platform) {
+    }
+
+    private static void showShowData(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void createShow(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void showUserPodcastList(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void showPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
+    }
+
+    private static void showPodcastData(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void showVideoData(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void showVideoSubtitleList(StreamingPlatform platform) {
+        
+    }
+
+    private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
+        
+    }
+
+    private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
+    }
+
+    private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
+        String videoId = scanner.next(); int videoDuration = scanner.nextInt();
+        String url = scanner.next(); scanner.nextLine();
+
+        String publisher = scanner.nextLine();
+        String title = scanner.nextLine();
+        String language = scanner.next(); scanner.nextLine();
+        platform.addPublishableVideo(videoId, videoDuration, url, publisher, title, language);
+    }
+
+    public static void main(String[] args) {
+        StreamingPlatform platform = new StreamingPlatformClass();
+        Scanner scanner = new Scanner(System.in);
+        runProgram(scanner, platform);
+        scanner.close();
+    }
 }
