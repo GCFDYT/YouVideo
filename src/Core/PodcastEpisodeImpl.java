@@ -5,10 +5,8 @@ public class PodcastEpisodeImpl extends AbstractVideoImpl implements PodcastEpis
     private final String url;
     private final String date;
 
-
-    private PodcastEpisodeImpl(String videoId, int videoDuration, String title, String url, String date) {
+    public PodcastEpisodeImpl(String videoId, int videoDuration, String title, String url, String date) {
         super(videoId, title, videoDuration);
-
         this.url = url;
         this.date = date;
     }
