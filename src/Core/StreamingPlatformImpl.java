@@ -6,64 +6,61 @@ import java.util.Locale;
 
 public class StreamingPlatformImpl implements StreamingPlatform {
 
-    private final Array videos;
-    private final Array podcasts;
-    private final Array shows;
-
-    // Array paralelo para guardar a relação episódio -> podcast
-    private final Array episodeToPodcast;
+    private final Array<PublishableVideo> videos;
+    private final Array<Podcast> podcasts;
+    private final Array<Show> shows;
+    private final Array<PodcastEpisode> episodes;
+    private final Array<String> episodeToPodcast;
 
     public StreamingPlatformImpl() {
-        videos = new ArrayClass();
-        podcasts = new ArrayClass();
-        shows = new ArrayClass();
-        episodeToPodcast = new ArrayClass();
+        videos = new ArrayClass<>();
+        podcasts = new ArrayClass<>();
+        shows = new ArrayClass<>();
+        episodes = new ArrayClass<>();
+        episodeToPodcast = new ArrayClass<>();
     }
-
-    // ==================== MÉTODOS AUXILIARES ====================
 
     private PublishableVideo findPublishableVideoById(String videoId) {
         PublishableVideo found = null;
         for (int i = 0; i < videos.size() && found == null; i++) {
-            Object obj = videos.get(i);
-            if (obj instanceof PublishableVideo video) {
-                if (video.getVideoId().equals(videoId)) {
-                    found = video;
-                }
+            PublishableVideo video = videos.get(i);
+            if (video.getVideoId().equals(videoId)) {
+                found = video;
             }
         }
         return found;
     }
 
-    private boolean isPublishableVideo(String videoId) {
-        return findPublishableVideoById(videoId) != null;
+    private PodcastEpisode findEpisodeById(String videoId) {
+        PodcastEpisode found = null;
+        for (int i = 0; i < episodes.size() && found == null; i++) {
+            PodcastEpisode episode = episodes.get(i);
+            if (episode.getVideoId().equals(videoId)) {
+                found = episode;
+            }
+        }
+        return found;
     }
 
-    private boolean isPremiumVideo(String videoId) {
+    private boolean isVideoUnpublishable(String videoId) {
+        return findPublishableVideoById(videoId) == null;
+    }
+
+    private boolean isVideoNotPremium(String videoId) {
         PublishableVideo video = findPublishableVideoById(videoId);
-        return video != null && video instanceof PremiumVideo;
+        return !(video instanceof PremiumVideo);
     }
 
     private boolean isPodcastEpisode(String videoId) {
-        boolean found = false;
-        for (int i = 0; i < videos.size() && !found; i++) {
-            Object obj = videos.get(i);
-            if (obj instanceof PodcastEpisode) {
-                PodcastEpisode episode = (PodcastEpisode) obj;
-                if (episode.getVideoId().equals(videoId)) {
-                    found = true;
-                }
-            }
-        }
-        return found;
+        return findEpisodeById(videoId) != null;
     }
 
     private String getPodcastTitleForEpisode(String episodeId) {
         String podcastTitle = null;
         for (int i = 0; i < episodeToPodcast.size() && podcastTitle == null; i += 2) {
-            String episodeIdStored = (String) episodeToPodcast.get(i);
+            String episodeIdStored = episodeToPodcast.get(i);
             if (episodeIdStored.equals(episodeId)) {
-                podcastTitle = (String) episodeToPodcast.get(i + 1);
+                podcastTitle = episodeToPodcast.get(i + 1);
             }
         }
         return podcastTitle;
@@ -75,25 +72,24 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     private void removeEpisodeFromPodcastMapping(String episodeId) {
-        for (int i = 0; i < episodeToPodcast.size(); i += 2) {
-            String episodeIdStored = (String) episodeToPodcast.get(i);
+        boolean found = false;
+        for (int i = 0; i < episodeToPodcast.size() && !found; i += 2) {
+            String episodeIdStored = episodeToPodcast.get(i);
             if (episodeIdStored.equals(episodeId)) {
                 episodeToPodcast.removeAt(i + 1);
                 episodeToPodcast.removeAt(i);
-                return;
+                found = true;
             }
         }
     }
 
     private void removeAllEpisodesFromPodcast(String podcastTitle) {
-        for (int i = videos.size() - 1; i >= 0; i--) {
-            Object obj = videos.get(i);
-            if (obj instanceof PodcastEpisode episode) {
-                String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
-                if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
-                    removeEpisodeFromPodcastMapping(episode.getVideoId());
-                    videos.removeAt(i);
-                }
+        for (int i = episodes.size() - 1; i >= 0; i--) {
+            PodcastEpisode episode = episodes.get(i);
+            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
+            if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
+                removeEpisodeFromPodcastMapping(episode.getVideoId());
+                episodes.removeAt(i);
             }
         }
     }
@@ -101,7 +97,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private Podcast findPodcastByTitle(String title) {
         Podcast found = null;
         for (int i = 0; i < podcasts.size() && found == null; i++) {
-            Podcast podcast = (Podcast) podcasts.get(i);
+            Podcast podcast = podcasts.get(i);
             if (podcast.title().equalsIgnoreCase(title)) {
                 found = podcast;
             }
@@ -116,7 +112,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private int findPodcastIndex(String title) {
         int index = -1;
         for (int i = 0; i < podcasts.size() && index == -1; i++) {
-            Podcast podcast = (Podcast) podcasts.get(i);
+            Podcast podcast = podcasts.get(i);
             if (podcast.title().equalsIgnoreCase(title)) {
                 index = i;
             }
@@ -124,40 +120,36 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return index;
     }
 
-    private Array getPodcastEpisodesList(String podcastTitle) {
-        Array episodes = new ArrayClass();
-        for (int i = 0; i < videos.size(); i++) {
-            Object obj = videos.get(i);
-            if (obj instanceof PodcastEpisode) {
-                PodcastEpisode episode = (PodcastEpisode) obj;
-                String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
-                if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
-                    // Inserir no início para manter ordem reversa cronológica
-                    if (episodes.size() == 0) {
-                        episodes.insertLast(episode);
-                    } else {
-                        boolean inserted = false;
-                        for (int j = 0; j < episodes.size() && !inserted; j++) {
-                            PodcastEpisode existing = (PodcastEpisode) episodes.get(j);
-                            if (episode.getDate().compareTo(existing.getDate()) >= 0) {
-                                episodes.insertAt(episode, j);
-                                inserted = true;
-                            }
+    private Array<PodcastEpisode> getPodcastEpisodesList(String podcastTitle) {
+        Array<PodcastEpisode> result = new ArrayClass<>();
+        for (int i = 0; i < episodes.size(); i++) {
+            PodcastEpisode episode = episodes.get(i);
+            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
+            if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
+                if (result.size() == 0) {
+                    result.insertLast(episode);
+                } else {
+                    boolean inserted = false;
+                    for (int j = 0; j < result.size() && !inserted; j++) {
+                        PodcastEpisode existing = result.get(j);
+                        if (episode.getDate().compareTo(existing.getDate()) >= 0) {
+                            result.insertAt(episode, j);
+                            inserted = true;
                         }
-                        if (!inserted) {
-                            episodes.insertLast(episode);
-                        }
+                    }
+                    if (!inserted) {
+                        result.insertLast(episode);
                     }
                 }
             }
         }
-        return episodes;
+        return result;
     }
 
     private Show findShowByTitle(String title) {
         Show found = null;
         for (int i = 0; i < shows.size() && found == null; i++) {
-            Show show = (Show) shows.get(i);
+            Show show = shows.get(i);
             if (show.title().equalsIgnoreCase(title)) {
                 found = show;
             }
@@ -172,7 +164,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private int findShowIndex(String title) {
         int index = -1;
         for (int i = 0; i < shows.size() && index == -1; i++) {
-            Show show = (Show) shows.get(i);
+            Show show = shows.get(i);
             if (show.title().equalsIgnoreCase(title)) {
                 index = i;
             }
@@ -183,7 +175,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private boolean isVideoUsedInShow(String videoId) {
         boolean used = false;
         for (int i = 0; i < shows.size() && !used; i++) {
-            Show show = (Show) shows.get(i);
+            Show show = shows.get(i);
             if (show.videoID().equals(videoId)) {
                 used = true;
             }
@@ -194,18 +186,15 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private int findVideoIndexToRemove(String videoId) {
         int index = -1;
         for (int i = 0; i < videos.size() && index == -1; i++) {
-            Object obj = videos.get(i);
-            if (obj instanceof PublishableVideo) {
-                PublishableVideo v = (PublishableVideo) obj;
-                if (v.getVideoId().equals(videoId)) {
-                    index = i;
-                }
+            PublishableVideo video = videos.get(i);
+            if (video.getVideoId().equals(videoId)) {
+                index = i;
             }
         }
         return index;
     }
 
-    private boolean isValidLanguageCode(String languageCode) {
+    private boolean isLanguageCodeInvalid(String languageCode) {
         String[] languages = Locale.getISOLanguages();
         boolean valid = false;
         int i = 0;
@@ -215,21 +204,19 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             }
             i++;
         }
-        return valid;
+        return !valid;
     }
 
-    private boolean isValidDuration(int duration) {
-        return duration > 0;
+    private boolean isDurationOutOfBounds(int duration) {
+        return duration <= 0;
     }
-
-    // ==================== MÉTODOS DE VÍDEO ====================
 
     @Override
     public void addPublishableVideo(String videoId, int videoDuration, String url,
                                     String publisher, String title, String languageCode) {
-        if (!isValidLanguageCode(languageCode)) {
+        if (isLanguageCodeInvalid(languageCode)) {
             System.out.println(Main.INV_LANGUAGE);
-        } else if (!isValidDuration(videoDuration)) {
+        } else if (isDurationOutOfBounds(videoDuration)) {
             System.out.println(Main.INV_VALUE);
         } else if (findPublishableVideoById(videoId) != null) {
             System.out.println(Main.VIDEO_ID_EXISTS);
@@ -245,18 +232,17 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
                                 String title, String languageCode, String subtitleUrl,
                                 String subtitleLanguageCode) {
-        if (!isValidLanguageCode(languageCode)) {
+        if (isLanguageCodeInvalid(languageCode)) {
             System.out.println(Main.INV_LANGUAGE);
-        } else if (!isValidLanguageCode(subtitleLanguageCode)) {
+        } else if (isLanguageCodeInvalid(subtitleLanguageCode)) {
             System.out.println(Main.INV_SUBTITLE);
-        } else if (!isValidDuration(videoDuration)) {
+        } else if (isDurationOutOfBounds(videoDuration)) {
             System.out.println(Main.INV_VALUE);
         } else if (findPublishableVideoById(videoId) != null) {
             System.out.println(Main.VIDEO_ID_EXISTS);
         } else {
             PremiumVideo video = new PremiumVideoImpl(videoId, videoDuration, url, publisher,
-                    title, languageCode, subtitleUrl,
-                    subtitleLanguageCode);
+                    title, languageCode, subtitleUrl, subtitleLanguageCode);
             videos.insertLast(video);
             System.out.printf(Main.PREMIUM_VIDEO_CREATED + "%n", videoId);
         }
@@ -264,11 +250,11 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode) {
-        if (!isValidLanguageCode(subtitleLanguageCode)) {
+        if (isLanguageCodeInvalid(subtitleLanguageCode)) {
             System.out.println(Main.INV_SUBTITLE);
-        } else if (!isPublishableVideo(videoId)) {
+        } else if (isVideoUnpublishable(videoId)) {
             System.out.println(Main.VIDEO_NOT_FOUND);
-        } else if (!isPremiumVideo(videoId)) {
+        } else if (isVideoNotPremium(videoId)) {
             System.out.println(Main.NOT_PREMIUM);
         } else {
             PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
@@ -280,7 +266,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void getSubtitleList(String videoId) {
-        if (!isPremiumVideo(videoId)) {
+        if (isVideoNotPremium(videoId)) {
             System.out.println(Main.NO_PREMIUM_VIDEO);
         } else {
             PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
@@ -321,7 +307,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeVideo(String videoId) {
-        if (!isPublishableVideo(videoId)) {
+        if (isVideoUnpublishable(videoId)) {
             System.out.println(Main.VIDEO_NOT_FOUND);
         } else if (isPodcastEpisode(videoId)) {
             System.out.println(Main.CANT_REMOVE_EPISODE);
@@ -336,11 +322,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         }
     }
 
-    // ==================== MÉTODOS DE PODCAST ====================
-
     @Override
     public void addPodcast(String title, String author, String languageCode) {
-        if (!isValidLanguageCode(languageCode)) {
+        if (isLanguageCodeInvalid(languageCode)) {
             System.out.println(Main.INV_LANGUAGE);
         } else if (podcastExists(title)) {
             System.out.println(Main.PODCAST_EXISTS);
@@ -355,27 +339,26 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void addPodcastEpisode(String title, String videoId, int videoDuration,
                                   String episodeUrl, String date) {
         Podcast podcast = findPodcastByTitle(title);
-        if (!isValidDuration(videoDuration)) {
+        if (isDurationOutOfBounds(videoDuration)) {
             System.out.println(Main.INV_VALUE);
         } else if (podcast == null) {
             System.out.println(Main.PODCAST_NOT_FOUND);
         } else if (findPublishableVideoById(videoId) != null || isPodcastEpisode(videoId)) {
             System.out.println(Main.EPISODE_ID_EXISTS);
         } else {
-            Array existingEpisodes = getPodcastEpisodesList(title);
+            Array<PodcastEpisode> existingEpisodes = getPodcastEpisodesList(title);
             boolean dateValid = true;
             if (existingEpisodes.size() > 0) {
-                PodcastEpisode latest = (PodcastEpisode) existingEpisodes.get(0);
+                PodcastEpisode latest = existingEpisodes.get(0);
                 if (date.compareTo(latest.getDate()) < 0) {
                     dateValid = false;
                 }
-            }
-            if (!dateValid) {
+            } if (!dateValid) {
                 System.out.println(Main.INV_EPISODE_DATE);
             } else {
                 PodcastEpisode episode = new PodcastEpisodeImpl(videoId, videoDuration,
                         "Episode " + videoId, episodeUrl, date);
-                videos.insertLast(episode);
+                episodes.insertLast(episode);
                 addEpisodeToPodcastMapping(videoId, title);
                 System.out.println(Main.EPISODE_ADDED);
             }
@@ -392,9 +375,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             System.out.printf(Main.PODCAST_INFO + "%n",
                     podcast.title(), podcast.author(),
                     locale.getDisplayLanguage().toUpperCase());
-            Array episodes = getPodcastEpisodesList(title);
-            if (episodes.size() > 0) {
-                PodcastEpisode latest = (PodcastEpisode) episodes.get(0);
+            Array<PodcastEpisode> episodesList = getPodcastEpisodesList(title);
+            if (episodesList.size() > 0) {
+                PodcastEpisode latest = episodesList.get(0);
                 System.out.printf(Main.PODCAST_LATEST_EPISODE + "%n", latest.getDate());
             }
         }
@@ -406,13 +389,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         if (podcast == null) {
             System.out.println(Main.PODCAST_NOT_FOUND);
         } else {
-            Array episodes = getPodcastEpisodesList(title);
-            if (episodes.size() == 0) {
+            Array<PodcastEpisode> episodesList = getPodcastEpisodesList(title);
+            if (episodesList.size() == 0) {
                 System.out.println(Main.NO_EPISODES);
             } else {
                 System.out.printf(Main.EPISODES_HEADER + "%n", title);
-                for (int i = 0; i < episodes.size(); i++) {
-                    PodcastEpisode episode = (PodcastEpisode) episodes.get(i);
+                for (int i = 0; i < episodesList.size(); i++) {
+                    PodcastEpisode episode = episodesList.get(i);
                     System.out.printf(Main.EPISODE_ENTRY + "%n",
                             episode.getVideoId(), episode.getVideoDuration(),
                             episode.getDate());
@@ -427,7 +410,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         boolean found = false;
         System.out.printf(Main.AUTHOR_PODCASTS_HEADER + "%n", author);
         for (int i = 0; i < podcasts.size(); i++) {
-            Podcast podcast = (Podcast) podcasts.get(i);
+            Podcast podcast = podcasts.get(i);
             if (podcast.author().equalsIgnoreCase(author)) {
                 Locale locale = Locale.of(podcast.languageCode());
                 System.out.printf(Main.PODCAST_ENTRY + "%n",
@@ -452,8 +435,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             System.out.println(Main.PODCAST_REMOVED);
         }
     }
-
-    // ==================== MÉTODOS DE SHOW ====================
 
     @Override
     public void addShow(String author, String videoId, String date) {
