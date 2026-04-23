@@ -3,13 +3,13 @@ package Core;
 import dataStructures.Array;
 import dataStructures.ArrayClass;
 
-public class StreamingPlatformClass implements StreamingPlatform{
+public class StreamingPlatformImpl implements StreamingPlatform{
 
     private Array videos;
     private Array podcasts;
     private Array shows;
 
-    public StreamingPlatformClass() {
+    public StreamingPlatformImpl() {
         videos = new ArrayClass();
         podcasts = new ArrayClass();
         shows = new ArrayClass();

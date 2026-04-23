@@ -4,12 +4,12 @@ import dataStructures.Array;
 import dataStructures.ArrayClass;
 
 
-public class PremiumVideoClass extends PublishableVideoClass implements PremiumVideo{
+public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVideo{
 
     private final Array subtitles;
 
-    public PremiumVideoClass(String videoId, int videoDuration, String url, String publisher,
-                             String title, String language, String subtitleUrl, String subtitleLanguageCode) {
+    public PremiumVideoImpl(String videoId, int videoDuration, String url, String publisher,
+                            String title, String language, String subtitleUrl, String subtitleLanguageCode) {
 
         super(videoId,videoDuration, url, publisher, title, language);
 

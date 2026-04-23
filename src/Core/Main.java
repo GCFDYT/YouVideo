@@ -1,6 +1,5 @@
 package Core;
 
-import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -225,7 +224,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        StreamingPlatform platform = new StreamingPlatformClass();
+        StreamingPlatform platform = new StreamingPlatformImpl();
         Scanner scanner = new Scanner(System.in);
         runProgram(scanner, platform);
         scanner.close();

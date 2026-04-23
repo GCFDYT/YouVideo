@@ -1,12 +1,12 @@
 package Core;
 
-public class PodcastEpisodeClass extends AbstractVideoClass implements PodcastEpisode {
+public class PodcastEpisodeImpl extends AbstractVideoImpl implements PodcastEpisode {
 
     private final String url;
     private final String date;
 
 
-    private PodcastEpisodeClass(String videoId, int videoDuration, String title, String url, String date) {
+    private PodcastEpisodeImpl(String videoId, int videoDuration, String title, String url, String date) {
         super(videoId, title, videoDuration);
 
         this.url = url;

@@ -1,12 +1,12 @@
 package Core;
 
-public class PublishableVideoClass extends AbstractVideoClass implements PublishableVideo {
+public class PublishableVideoImpl extends AbstractVideoImpl implements PublishableVideo {
 
     private final String url;
     private final String publisher;
     private final String language;
 
-    public PublishableVideoClass(String videoId, int videoDuration, String url, String publisher, String title, String language) {
+    public PublishableVideoImpl(String videoId, int videoDuration, String url, String publisher, String title, String language) {
         super(videoId, title, videoDuration);
 
         this.url = url;
