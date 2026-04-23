@@ -84,10 +84,8 @@ public class Main {
                     DISPLAY_CMD_LIST + " - shows the available commands\n" +
                     EXIT_PROGRAM + " - terminates the execution of the program";
 
-    // ==================== CLASSE PARA CAMPOS DE VÍDEO ====================
-
     private static class VideoFields {
-        String videoId;
+        String videoID;
         int videoDuration;
         String url;
         String publisher;
@@ -97,7 +95,7 @@ public class Main {
 
     private static VideoFields readCommonVideoFields(Scanner scanner) {
         VideoFields fields = new VideoFields();
-        fields.videoId = scanner.next();
+        fields.videoID = scanner.next();
         fields.videoDuration = scanner.nextInt();
         fields.url = scanner.next();
         consumeLine(scanner);
@@ -107,8 +105,6 @@ public class Main {
         consumeLine(scanner);
         return fields;
     }
-
-    // ==================== MÉTODOS AUXILIARES DE LEITURA ====================
 
     private static void consumeLine(Scanner scanner) {
         if (scanner.hasNextLine()) {
@@ -125,8 +121,6 @@ public class Main {
     private static String readLine(Scanner scanner) {
         return scanner.nextLine();
     }
-
-    // ==================== MÉTODOS DOS COMANDOS ====================
 
     public static void runProgram(Scanner scanner, StreamingPlatform platform) {
         String command;
@@ -165,9 +159,9 @@ public class Main {
 
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
-        platform.addShow(author, videoId, date);
+        platform.addShow(author, videoID, date);
     }
 
     private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
@@ -188,11 +182,11 @@ public class Main {
 
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
         int videoDuration = scanner.nextInt();
         String url = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
-        platform.addPodcastEpisode(title, videoId, videoDuration, url, date);
+        platform.addPodcastEpisode(title, videoID, videoDuration, url, date);
     }
 
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
@@ -215,24 +209,24 @@ public class Main {
     }
 
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
         String subtitleLanguageCode = readTokenAndConsumeLine(scanner);
-        platform.addSubtitle(videoId, subtitleUrl, subtitleLanguageCode);
+        platform.addSubtitle(videoID, subtitleUrl, subtitleLanguageCode);
     }
 
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
         VideoFields fields = readCommonVideoFields(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
         String subtitleLanguageCode = readTokenAndConsumeLine(scanner);
-        platform.addPremiumVideo(fields.videoId, fields.videoDuration, fields.url,
+        platform.addPremiumVideo(fields.videoID, fields.videoDuration, fields.url,
                 fields.publisher, fields.title, fields.languageCode,
                 subtitleUrl, subtitleLanguageCode);
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         VideoFields fields = readCommonVideoFields(scanner);
-        platform.addPublishableVideo(fields.videoId, fields.videoDuration, fields.url,
+        platform.addPublishableVideo(fields.videoID, fields.videoDuration, fields.url,
                 fields.publisher, fields.title, fields.languageCode);
     }
 

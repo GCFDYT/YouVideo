@@ -2,22 +2,22 @@ package Core;
 
 public interface StreamingPlatform {
 
-    void addPublishableVideo(String videoId, int videoDuration, String url, String publisher,
+    void addPublishableVideo(String videoID, int videoDuration, String url, String publisher,
                              String title, String languageCode);
 
-    void addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
+    void addPremiumVideo(String videoID, int videoDuration, String url, String publisher,
                          String title, String languageCode, String subtitleUrl,
                          String subtitleLanguageCode);
 
-    void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode);
+    void addSubtitle(String videoID, String subtitleUrl, String subtitleLanguageCode);
 
-    void getSubtitleList(String videoId);
+    void getSubtitleList(String videoID);
 
-    void getVideo(String videoId);
+    void getVideo(String videoID);
 
     void addPodcast(String title, String author, String languageCode);
 
-    void addPodcastEpisode(String title, String videoId, int videoDuration, String url, String date);
+    void addPodcastEpisode(String title, String videoID, int videoDuration, String url, String date);
 
     void getPodcast(String title);
 
@@ -27,11 +27,11 @@ public interface StreamingPlatform {
 
     void removePodcast(String title);
 
-    void addShow(String author, String videoId, String date);
+    void addShow(String author, String videoID, String date);
 
     void getShow(String title);
 
     void removeShow(String title);
 
-    void removeVideo(String videoId);
+    void removeVideo(String videoID);
 }
