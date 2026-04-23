@@ -102,13 +102,11 @@ public class ArrayClass<E> implements Array<E> {
 	@Override
 	public E get(int pos) {
 		return elems[pos];
-
 	}
 
 	@Override
 	public int size() {
 		return counter;
-
 	}
 
 	@Override
