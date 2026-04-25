@@ -24,7 +24,7 @@ public class Main {
     public static final String DISPLAY_CMD_LIST = "help";
     public static final String EXIT_PROGRAM = "exit";
 
-    // Output messages
+    // Output messages:
     public static final String CMD_ERR = "Unknown command. Type help to see available commands.";
     public static final String EXIT_MSG = "Bye!";
     public static final String VIDEO_CREATED = "Video %s created successfully.";
@@ -210,9 +210,8 @@ public class Main {
             Array<PodcastEpisode> episodesList = status.data();
             for (int i = 0; i < episodesList.size(); i++) {
                 PodcastEpisode episode = episodesList.get(i);
-                System.out.printf(EPISODE_ENTRY + "%n",
-                        episode.getVideoID(), episode.getVideoDuration(),
-                        episode.getDate());
+                System.out.printf(EPISODE_ENTRY + "%n", episode.getVideoID(),
+                        episode.getVideoDuration(), episode.getDate());
                 System.out.printf(EPISODE_URL + "%n", episode.getUrl());
             }
         } else {
@@ -301,8 +300,7 @@ public class Main {
             for (int i = 0; i < subtitles.size(); i++) {
                 Subtitle subtitle = subtitles.get(i);
                 Locale locale = Locale.of(subtitle.getSubtitleLanguage());
-                System.out.printf(SUBTITLE_ENTRY + "%n",
-                        subtitle.getSubtitleUrl(),
+                System.out.printf(SUBTITLE_ENTRY + "%n", subtitle.getSubtitleUrl(),
                         locale.getDisplayLanguage().toUpperCase());
             }
         } else {
@@ -324,12 +322,8 @@ public class Main {
         String subtitleLanguageCode = readTokenAndConsumeLine(scanner);
 
         Status<String> status = platform.addPremiumVideo(fields[IDX_VIDEO_ID],
-                Integer.parseInt(fields[IDX_VIDEO_DURATION]),
-                fields[IDX_URL],
-                fields[IDX_PUBLISHER],
-                fields[IDX_TITLE],
-                fields[IDX_LANGUAGE_CODE],
-                subtitleUrl,
+                Integer.parseInt(fields[IDX_VIDEO_DURATION]), fields[IDX_URL],
+                fields[IDX_PUBLISHER], fields[IDX_TITLE], fields[IDX_LANGUAGE_CODE], subtitleUrl,
                 subtitleLanguageCode);
 
         if (status.success()) {
@@ -341,14 +335,9 @@ public class Main {
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
-        Status<String> status = platform.addPublishableVideo(
-                fields[IDX_VIDEO_ID],
-                Integer.parseInt(fields[IDX_VIDEO_DURATION]),
-                fields[IDX_URL],
-                fields[IDX_PUBLISHER],
-                fields[IDX_TITLE],
-                fields[IDX_LANGUAGE_CODE]
-        );
+        Status<String> status = platform.addPublishableVideo(fields[IDX_VIDEO_ID],
+                Integer.parseInt(fields[IDX_VIDEO_DURATION]), fields[IDX_URL],
+                fields[IDX_PUBLISHER], fields[IDX_TITLE], fields[IDX_LANGUAGE_CODE]);
 
         if (status.success()) {
             System.out.printf(status.message() + "%n", status.data());
