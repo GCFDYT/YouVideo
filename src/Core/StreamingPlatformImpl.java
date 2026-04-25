@@ -199,7 +199,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         boolean valid = false;
         int i = 0;
         while (i < languages.length && !valid) {
-            if (languages[i].equals(languageCode)) {
+            if (languages[i].equalsIgnoreCase(languageCode)) {
                 valid = true;
             }
             i++;
@@ -210,141 +210,122 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private boolean isDurationOutOfBounds(int duration) {
         return duration <= 0;
     }
-
     @Override
-    public void addPublishableVideo(String videoId, int videoDuration, String url,
-                                    String publisher, String title, String languageCode) {
+    public Status<String> addPublishableVideo(String videoId, int videoDuration, String url,
+                                              String publisher, String title, String languageCode) {
         if (isLanguageCodeInvalid(languageCode)) {
-            System.out.println(Main.INV_LANGUAGE);
+            return Status.error(Main.INV_LANGUAGE);
         } else if (isDurationOutOfBounds(videoDuration)) {
-            System.out.println(Main.INV_VALUE);
+            return Status.error(Main.INV_VALUE);
         } else if (findPublishableVideoById(videoId) != null) {
-            System.out.println(Main.VIDEO_ID_EXISTS);
+            return Status.error(Main.VIDEO_ID_EXISTS);
         } else {
             PublishableVideo video = new PublishableVideoImpl(videoId, videoDuration, url,
                     publisher, title, languageCode);
             videos.insertLast(video);
-            System.out.printf(Main.VIDEO_CREATED + "%n", videoId);
+            // Returning the videoId so Main can format the success message
+            return Status.success(Main.VIDEO_CREATED, videoId);
         }
     }
 
     @Override
-    public void addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
-                                String title, String languageCode, String subtitleUrl,
-                                String subtitleLanguageCode) {
+    public Status<String> addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
+                                          String title, String languageCode, String subtitleUrl,
+                                          String subtitleLanguageCode) {
         if (isLanguageCodeInvalid(languageCode)) {
-            System.out.println(Main.INV_LANGUAGE);
+            return Status.error(Main.INV_LANGUAGE);
         } else if (isLanguageCodeInvalid(subtitleLanguageCode)) {
-            System.out.println(Main.INV_SUBTITLE);
+            return Status.error(Main.INV_SUBTITLE);
         } else if (isDurationOutOfBounds(videoDuration)) {
-            System.out.println(Main.INV_VALUE);
+            return Status.error(Main.INV_VALUE);
         } else if (findPublishableVideoById(videoId) != null) {
-            System.out.println(Main.VIDEO_ID_EXISTS);
+            return Status.error(Main.VIDEO_ID_EXISTS);
         } else {
             PremiumVideo video = new PremiumVideoImpl(videoId, videoDuration, url, publisher,
                     title, languageCode, subtitleUrl, subtitleLanguageCode);
             videos.insertLast(video);
-            System.out.printf(Main.PREMIUM_VIDEO_CREATED + "%n", videoId);
+            return Status.success(Main.PREMIUM_VIDEO_CREATED, videoId);
         }
     }
 
     @Override
-    public void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode) {
+    public Status<Void> addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode) {
         if (isLanguageCodeInvalid(subtitleLanguageCode)) {
-            System.out.println(Main.INV_SUBTITLE);
+            return Status.error(Main.INV_SUBTITLE);
         } else if (isVideoUnpublishable(videoId)) {
-            System.out.println(Main.VIDEO_NOT_FOUND);
+            return Status.error(Main.VIDEO_NOT_FOUND);
         } else if (isVideoNotPremium(videoId)) {
-            System.out.println(Main.NOT_PREMIUM);
+            return Status.error(Main.NOT_PREMIUM);
         } else {
             PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
             Subtitle subtitle = new Subtitle(subtitleUrl, subtitleLanguageCode);
             premiumVideo.addSubtitle(subtitle);
-            System.out.println(Main.SUBTITLE_ADDED);
+            return Status.success(Main.SUBTITLE_ADDED);
         }
     }
 
     @Override
-    public void getSubtitleList(String videoId) {
+    public Status<PremiumVideo> getSubtitleList(String videoId) {
         if (isVideoNotPremium(videoId)) {
-            System.out.println(Main.NO_PREMIUM_VIDEO);
+            return Status.error(Main.NO_PREMIUM_VIDEO);
         } else {
             PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
-            Array subtitles = premiumVideo.getSubtitles();
-            System.out.printf(Main.SUBTITLES_HEADER + "%n", premiumVideo.getTitle());
-            for (int i = 0; i < subtitles.size(); i++) {
-                Subtitle subtitle = (Subtitle) subtitles.get(i);
-                Locale locale = Locale.of(subtitle.getSubtitleLanguage());
-                System.out.printf(Main.SUBTITLE_ENTRY + "%n",
-                        subtitle.getSubtitleUrl(),
-                        locale.getDisplayLanguage().toUpperCase());
-            }
+            // Main gets the whole PremiumVideo, so it can call getTitle() and getSubtitles() directly
+            return Status.successWithData(premiumVideo);
         }
     }
 
     @Override
-    public void getVideo(String videoId) {
+    public Status<PublishableVideo> getVideo(String videoId) {
         PublishableVideo video = findPublishableVideoById(videoId);
         if (video == null) {
-            System.out.printf(Main.PUBLISHABLE_NOT_FOUND + "%n", videoId);
+            return Status.error(Main.PUBLISHABLE_NOT_FOUND);
         } else {
-            Locale locale = Locale.of(video.getLanguage());
-            if (video instanceof PremiumVideo) {
-                System.out.printf("PREMIUM Video %s %d Title: %s%n",
-                        video.getVideoId(), video.getVideoDuration(), video.getTitle());
-                System.out.printf("File: %s Publisher: %s Language: %s%n",
-                        video.getUrl(), video.getPublisher(),
-                        locale.getDisplayLanguage().toUpperCase());
-            } else {
-                System.out.printf("Video %s %d Title: %s%n",
-                        video.getVideoId(), video.getVideoDuration(), video.getTitle());
-                System.out.printf("File: %s Publisher: %s Language: %s%n",
-                        video.getUrl(), video.getPublisher(),
-                        locale.getDisplayLanguage().toUpperCase());
-            }
+            return Status.successWithData(video);
         }
     }
 
     @Override
-    public void removeVideo(String videoId) {
+    public Status<Void> removeVideo(String videoId) {
         if (isVideoUnpublishable(videoId)) {
-            System.out.println(Main.VIDEO_NOT_FOUND);
+            return Status.error(Main.VIDEO_NOT_FOUND);
         } else if (isPodcastEpisode(videoId)) {
-            System.out.println(Main.CANT_REMOVE_EPISODE);
+            return Status.error(Main.CANT_REMOVE_EPISODE);
         } else if (isVideoUsedInShow(videoId)) {
-            System.out.println(Main.CANT_REMOVE_USED_VIDEO);
+            return Status.error(Main.CANT_REMOVE_USED_VIDEO);
         } else {
             int indexToRemove = findVideoIndexToRemove(videoId);
             if (indexToRemove != -1) {
                 videos.removeAt(indexToRemove);
-                System.out.println(Main.VIDEO_REMOVED);
+                return Status.success(Main.VIDEO_REMOVED);
             }
+            return Status.error(Main.VIDEO_NOT_FOUND);
         }
     }
 
     @Override
-    public void addPodcast(String title, String author, String languageCode) {
+    public Status<Void> addPodcast(String title, String author, String languageCode) {
         if (isLanguageCodeInvalid(languageCode)) {
-            System.out.println(Main.INV_LANGUAGE);
+            return Status.error(Main.INV_LANGUAGE);
         } else if (podcastExists(title)) {
-            System.out.println(Main.PODCAST_EXISTS);
+            return Status.error(Main.PODCAST_EXISTS);
         } else {
             Podcast podcast = new PodcastClassImpl(title, author, languageCode);
             podcasts.insertLast(podcast);
-            System.out.println(Main.PODCAST_CREATED);
+            return Status.success(Main.PODCAST_CREATED);
         }
     }
 
     @Override
-    public void addPodcastEpisode(String title, String videoId, int videoDuration,
-                                  String episodeUrl, String date) {
+    public Status<Void> addPodcastEpisode(String title, String videoId, int videoDuration,
+                                          String episodeUrl, String date) {
         Podcast podcast = findPodcastByTitle(title);
         if (isDurationOutOfBounds(videoDuration)) {
-            System.out.println(Main.INV_VALUE);
+            return Status.error(Main.INV_VALUE);
         } else if (podcast == null) {
-            System.out.println(Main.PODCAST_NOT_FOUND);
+            return Status.error(Main.PODCAST_NOT_FOUND);
         } else if (findPublishableVideoById(videoId) != null || isPodcastEpisode(videoId)) {
-            System.out.println(Main.EPISODE_ID_EXISTS);
+            return Status.error(Main.EPISODE_ID_EXISTS);
         } else {
             Array<PodcastEpisode> existingEpisodes = getPodcastEpisodesList(title);
             boolean dateValid = true;
@@ -353,122 +334,104 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                 if (date.compareTo(latest.getDate()) < 0) {
                     dateValid = false;
                 }
-            } if (!dateValid) {
-                System.out.println(Main.INV_EPISODE_DATE);
+            }
+            if (!dateValid) {
+                return Status.error(Main.INV_EPISODE_DATE);
             } else {
                 PodcastEpisode episode = new PodcastEpisodeImpl(videoId, videoDuration,
                         "Episode " + videoId, episodeUrl, date);
                 episodes.insertLast(episode);
                 addEpisodeToPodcastMapping(videoId, title);
-                System.out.println(Main.EPISODE_ADDED);
+                return Status.success(Main.EPISODE_ADDED);
             }
         }
     }
 
     @Override
-    public void getPodcast(String title) {
+    public Status<Podcast> getPodcast(String title) {
         Podcast podcast = findPodcastByTitle(title);
         if (podcast == null) {
-            System.out.println(Main.PODCAST_NOT_FOUND);
+            return Status.error(Main.PODCAST_NOT_FOUND);
         } else {
-            Locale locale = Locale.of(podcast.languageCode());
-            System.out.printf(Main.PODCAST_INFO + "%n",
-                    podcast.title(), podcast.author(),
-                    locale.getDisplayLanguage().toUpperCase());
-            Array<PodcastEpisode> episodesList = getPodcastEpisodesList(title);
-            if (episodesList.size() > 0) {
-                PodcastEpisode latest = episodesList.get(0);
-                System.out.printf(Main.PODCAST_LATEST_EPISODE + "%n", latest.getDate());
-            }
+            return Status.successWithData(podcast);
         }
     }
 
     @Override
-    public void getPodcastEpisodes(String title) {
+    public Status<Array<PodcastEpisode>> getPodcastEpisodes(String title) {
         Podcast podcast = findPodcastByTitle(title);
         if (podcast == null) {
-            System.out.println(Main.PODCAST_NOT_FOUND);
+            return Status.error(Main.PODCAST_NOT_FOUND);
         } else {
             Array<PodcastEpisode> episodesList = getPodcastEpisodesList(title);
             if (episodesList.size() == 0) {
-                System.out.println(Main.NO_EPISODES);
+                return Status.error(Main.NO_EPISODES);
             } else {
-                System.out.printf(Main.EPISODES_HEADER + "%n", title);
-                for (int i = 0; i < episodesList.size(); i++) {
-                    PodcastEpisode episode = episodesList.get(i);
-                    System.out.printf(Main.EPISODE_ENTRY + "%n",
-                            episode.getVideoId(), episode.getVideoDuration(),
-                            episode.getDate());
-                    System.out.printf(Main.EPISODE_URL + "%n", episode.getUrl());
-                }
+                return Status.successWithData(episodesList);
             }
         }
     }
 
     @Override
-    public void getAuthorPodcasts(String author) {
-        boolean found = false;
-        System.out.printf(Main.AUTHOR_PODCASTS_HEADER + "%n", author);
+    public Status<Array<Podcast>> getAuthorPodcasts(String author) {
+        Array<Podcast> authorPodcasts = new ArrayClass<>();
         for (int i = 0; i < podcasts.size(); i++) {
             Podcast podcast = podcasts.get(i);
             if (podcast.author().equalsIgnoreCase(author)) {
-                Locale locale = Locale.of(podcast.languageCode());
-                System.out.printf(Main.PODCAST_ENTRY + "%n",
-                        podcast.title(), podcast.author(),
-                        locale.getDisplayLanguage().toUpperCase());
-                found = true;
+                authorPodcasts.insertLast(podcast);
             }
         }
-        if (!found) {
-            System.out.println(Main.NO_USER_PODCASTS);
+
+        if (authorPodcasts.size() == 0) {
+            return Status.error(Main.NO_USER_PODCASTS);
         }
+        return Status.successWithData(authorPodcasts);
     }
 
     @Override
-    public void removePodcast(String title) {
+    public Status<Void> removePodcast(String title) {
         int indexToRemove = findPodcastIndex(title);
         if (indexToRemove == -1) {
-            System.out.println(Main.PODCAST_NOT_FOUND);
+            return Status.error(Main.PODCAST_NOT_FOUND);
         } else {
             removeAllEpisodesFromPodcast(title);
             podcasts.removeAt(indexToRemove);
-            System.out.println(Main.PODCAST_REMOVED);
+            return Status.success(Main.PODCAST_REMOVED);
         }
     }
 
     @Override
-    public void addShow(String author, String videoId, String date) {
+    public Status<Void> addShow(String author, String videoId, String date) {
         PublishableVideo video = findPublishableVideoById(videoId);
         if (video == null) {
-            System.out.println(Main.SHOW_NOT_FOUND);
+            return Status.error(Main.SHOW_NOT_FOUND);
         } else if (showExists(video.getTitle())) {
-            System.out.println(Main.SHOW_EXISTS);
+            return Status.error(Main.SHOW_EXISTS);
         } else {
             Show show = new ShowImpl(author, video.getTitle(), videoId, date);
             shows.insertLast(show);
-            System.out.println(Main.SHOW_CREATED);
+            return Status.success(Main.SHOW_CREATED);
         }
     }
 
     @Override
-    public void getShow(String title) {
+    public Status<Show> getShow(String title) {
         Show show = findShowByTitle(title);
         if (show == null) {
-            System.out.println(Main.SHOW_FALSE);
+            return Status.error(Main.SHOW_FALSE);
         } else {
-            System.out.printf(Main.SHOW_INFO + "%n", show.date(), show.author());
-            System.out.printf(Main.SHOW_VIDEO + "%n", show.videoID());
+            return Status.successWithData(show);
         }
     }
 
     @Override
-    public void removeShow(String title) {
+    public Status<Void> removeShow(String title) {
         int indexToRemove = findShowIndex(title);
         if (indexToRemove == -1) {
-            System.out.println(Main.SHOW_FALSE);
+            return Status.error(Main.SHOW_FALSE);
         } else {
             shows.removeAt(indexToRemove);
-            System.out.println(Main.SHOW_REMOVED);
+            return Status.success(Main.SHOW_REMOVED);
         }
     }
 }

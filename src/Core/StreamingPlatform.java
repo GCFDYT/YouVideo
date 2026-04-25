@@ -1,37 +1,40 @@
 package Core;
 
+import dataStructures.Array;
+
 public interface StreamingPlatform {
 
-    void addPublishableVideo(String videoId, int videoDuration, String url, String publisher,
-                             String title, String languageCode);
+    Status<String> addPublishableVideo(String videoId, int videoDuration, String url,
+                                       String publisher, String title, String languageCode);
 
-    void addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
-                         String title, String languageCode, String subtitleUrl,
-                         String subtitleLanguageCode);
+    Status<String> addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
+                                   String title, String languageCode, String subtitleUrl,
+                                   String subtitleLanguageCode);
 
-    void addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode);
+    Status<Void> addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode);
 
-    void getSubtitleList(String videoId);
+    Status<PremiumVideo> getSubtitleList(String videoId);
 
-    void getVideo(String videoId);
+    Status<PublishableVideo> getVideo(String videoId);
 
-    void addPodcast(String title, String author, String languageCode);
+    Status<Void> removeVideo(String videoId);
 
-    void addPodcastEpisode(String title, String videoId, int videoDuration, String url, String date);
+    Status<Void> addPodcast(String title, String author, String languageCode);
 
-    void getPodcast(String title);
+    Status<Void> addPodcastEpisode(String title, String videoId, int videoDuration,
+                                   String episodeUrl, String date);
 
-    void getPodcastEpisodes(String title);
+    Status<Podcast> getPodcast(String title);
 
-    void getAuthorPodcasts(String author);
+    Status<Array<PodcastEpisode>> getPodcastEpisodes(String title);
 
-    void removePodcast(String title);
+    Status<Array<Podcast>> getAuthorPodcasts(String author);
 
-    void addShow(String author, String videoId, String date);
+    Status<Void> removePodcast(String title);
 
-    void getShow(String title);
+    Status<Void> addShow(String author, String videoId, String date);
 
-    void removeShow(String title);
+    Status<Show> getShow(String title);
 
-    void removeVideo(String videoId);
+    Status<Void> removeShow(String title);
 }

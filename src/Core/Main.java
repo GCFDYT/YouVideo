@@ -1,5 +1,7 @@
 package Core;
 
+import dataStructures.Array;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -156,34 +158,92 @@ public class Main {
     }
 
     private static void deleteShow(Scanner scanner, StreamingPlatform platform) {
-        platform.removeShow(readLine(scanner));
+        Status<Void> status = platform.removeShow(readLine(scanner));
+        System.out.println(status.message());
     }
 
     private static void displayShowData(Scanner scanner, StreamingPlatform platform) {
-        platform.getShow(readLine(scanner));
+        Status<Show> status = platform.getShow(readLine(scanner));
+        if (status.success()) {
+            Show show = status.data();
+            System.out.printf(SHOW_INFO + "%n", show.date(), show.author());
+            System.out.printf(SHOW_VIDEO + "%n", show.videoID());
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
         String videoId = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
-        platform.addShow(author, videoId, date);
+        Status<Void> status = platform.addShow(author, videoId, date);
+        System.out.println(status.message());
     }
 
     private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
-        platform.removePodcast(readLine(scanner));
+        Status<Void> status = platform.removePodcast(readLine(scanner));
+        System.out.println(status.message());
     }
 
     private static void displayAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
-        platform.getAuthorPodcasts(readLine(scanner));
+        String author = readLine(scanner);
+        Status<Array<Podcast>> status = platform.getAuthorPodcasts(author);
+
+        if (status.success()) {
+            System.out.printf(AUTHOR_PODCASTS_HEADER + "%n", author);
+            Array<Podcast> podcasts = status.data();
+            for (int i = 0; i < podcasts.size(); i++) {
+                Podcast podcast = podcasts.get(i);
+                Locale locale = Locale.of(podcast.languageCode());
+                System.out.printf(PODCAST_ENTRY + "%n",
+                        podcast.title(), podcast.author(),
+                        locale.getDisplayLanguage().toUpperCase());
+            }
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void displayPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
-        platform.getPodcastEpisodes(readLine(scanner));
+        String title = readLine(scanner);
+        Status<Array<PodcastEpisode>> status = platform.getPodcastEpisodes(title);
+
+        if (status.success()) {
+            System.out.printf(EPISODES_HEADER + "%n", title);
+            Array<PodcastEpisode> episodesList = status.data();
+            for (int i = 0; i < episodesList.size(); i++) {
+                PodcastEpisode episode = episodesList.get(i);
+                System.out.printf(EPISODE_ENTRY + "%n",
+                        episode.getVideoId(), episode.getVideoDuration(),
+                        episode.getDate());
+                System.out.printf(EPISODE_URL + "%n", episode.getUrl());
+            }
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void displayPodcastData(Scanner scanner, StreamingPlatform platform) {
-        platform.getPodcast(readLine(scanner));
+        String title = readLine(scanner);
+        Status<Podcast> status = platform.getPodcast(title);
+
+        if (status.success()) {
+            Podcast podcast = status.data();
+            Locale locale = Locale.of(podcast.languageCode());
+            System.out.printf(PODCAST_INFO + "%n",
+                    podcast.title(), podcast.author(),
+                    locale.getDisplayLanguage().toUpperCase());
+
+            // Fetch episodes to find the latest date using the generic platform method
+            Status<Array<PodcastEpisode>> epStatus = platform.getPodcastEpisodes(title);
+            if (epStatus.success() && epStatus.data().size() > 0) {
+                PodcastEpisode latest = epStatus.data().get(0);
+                System.out.printf(PODCAST_LATEST_EPISODE + "%n", latest.getDate());
+            }
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
@@ -192,48 +252,104 @@ public class Main {
         int videoDuration = scanner.nextInt();
         String url = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
-        platform.addPodcastEpisode(title, videoId, videoDuration, url, date);
+        Status<Void> status = platform.addPodcastEpisode(title, videoId, videoDuration, url, date);
+        System.out.println(status.message());
     }
 
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String author = readLine(scanner);
         String languageCode = readTokenAndConsumeLine(scanner);
-        platform.addPodcast(title, author, languageCode);
+        Status<Void> status = platform.addPodcast(title, author, languageCode);
+        System.out.println(status.message());
     }
 
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
-        platform.removeVideo(readTokenAndConsumeLine(scanner));
+        Status<Void> status = platform.removeVideo(readTokenAndConsumeLine(scanner));
+        System.out.println(status.message());
     }
 
     private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
-        platform.getVideo(readTokenAndConsumeLine(scanner));
+        String videoId = readTokenAndConsumeLine(scanner);
+        Status<PublishableVideo> status = platform.getVideo(videoId);
+
+        if (status.success()) {
+            PublishableVideo video = status.data();
+            Locale locale = Locale.of(video.getLanguage());
+            if (video instanceof PremiumVideo) {
+                System.out.printf("PREMIUM Video %s %d Title: %s%n",
+                        video.getVideoId(), video.getVideoDuration(), video.getTitle());
+            } else {
+                System.out.printf("Video %s %d Title: %s%n",
+                        video.getVideoId(), video.getVideoDuration(), video.getTitle());
+            }
+            System.out.printf("File: %s Publisher: %s Language: %s%n",
+                    video.getUrl(), video.getPublisher(),
+                    locale.getDisplayLanguage().toUpperCase());
+        } else {
+            if (status.message().contains("%s")) {
+                System.out.printf(status.message() + "%n", videoId);
+            } else {
+                System.out.println(status.message());
+            }
+        }
     }
 
     private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
-        platform.getSubtitleList(readTokenAndConsumeLine(scanner));
+        Status<PremiumVideo> status = platform.getSubtitleList(readTokenAndConsumeLine(scanner));
+
+        if (status.success()) {
+            PremiumVideo premiumVideo = status.data();
+            System.out.printf(SUBTITLES_HEADER + "%n", premiumVideo.getTitle());
+
+            Array subtitles = premiumVideo.getSubtitles();
+            for (int i = 0; i < subtitles.size(); i++) {
+                Subtitle subtitle = (Subtitle) subtitles.get(i);
+                Locale locale = Locale.of(subtitle.getSubtitleLanguage());
+                System.out.printf(SUBTITLE_ENTRY + "%n",
+                        subtitle.getSubtitleUrl(),
+                        locale.getDisplayLanguage().toUpperCase());
+            }
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
         String videoId = readTokenAndConsumeLine(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
         String subtitleLanguageCode = readTokenAndConsumeLine(scanner);
-        platform.addSubtitle(videoId, subtitleUrl, subtitleLanguageCode);
+        Status<Void> status = platform.addSubtitle(videoId, subtitleUrl, subtitleLanguageCode);
+        System.out.println(status.message());
     }
 
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
         VideoFields fields = readCommonVideoFields(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
         String subtitleLanguageCode = readTokenAndConsumeLine(scanner);
-        platform.addPremiumVideo(fields.videoId, fields.videoDuration, fields.url,
+
+        Status<String> status = platform.addPremiumVideo(fields.videoId, fields.videoDuration, fields.url,
                 fields.publisher, fields.title, fields.languageCode,
                 subtitleUrl, subtitleLanguageCode);
+
+        if (status.success()) {
+            System.out.printf(status.message() + "%n", status.data());
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         VideoFields fields = readCommonVideoFields(scanner);
-        platform.addPublishableVideo(fields.videoId, fields.videoDuration, fields.url,
+        Status<String> status = platform.addPublishableVideo(fields.videoId, fields.videoDuration, fields.url,
                 fields.publisher, fields.title, fields.languageCode);
+
+        if (status.success()) {
+            // Using status.data() which contains the returned videoId
+            System.out.printf(status.message() + "%n", status.data());
+        } else {
+            System.out.println(status.message());
+        }
     }
 
     public static void main(String[] args) {
