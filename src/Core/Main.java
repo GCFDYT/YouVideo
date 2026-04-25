@@ -71,7 +71,7 @@ public class Main {
     public static final String SHOW_REMOVED = "Show removed successfully.";
 
     public static final String HELP_MSG =
-                    CREATE_PUBLISHABLE_VIDEO + " - creates a new publishable video\n" +
+            CREATE_PUBLISHABLE_VIDEO + " - creates a new publishable video\n" +
                     CREATE_PREMIUM_VIDEO + " - creates a new publishable Premium video\n" +
                     ADD_SUBTITLES_PREMIUM_VIDEO + " - adds subtitle to Premium video\n" +
                     DISPLAY_VIDEO_DATA + " - presents publishable video data from its id\n" +
