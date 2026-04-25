@@ -6,9 +6,8 @@ public class PublishableVideoImpl extends AbstractVideoImpl implements Publishab
     private final String publisher;
     private final String language;
 
-    public PublishableVideoImpl(String videoId, int videoDuration, String url, String publisher, String title, String language) {
-        super(videoId, title, videoDuration);
-
+    public PublishableVideoImpl(String videoID, int videoDuration, String url, String publisher, String title, String language) {
+        super(videoID, title, videoDuration);
         this.url = url;
         this.publisher = publisher;
         this.language = language;

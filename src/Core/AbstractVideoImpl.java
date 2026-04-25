@@ -2,19 +2,19 @@ package Core;
 
 public abstract class AbstractVideoImpl implements AbstractVideo {
 
-    private final String videoId;
+    private final String videoID;
     private final String title;
     private final int videoDuration;
 
-    protected AbstractVideoImpl(String videoId, String title, int videoDuration) {
-        this.videoId = videoId;
+    protected AbstractVideoImpl(String videoID, String title, int videoDuration) {
+        this.videoID = videoID;
         this.title = title;
         this.videoDuration = videoDuration;
     }
 
     @Override
-    public String getVideoId() {
-        return videoId;
+    public String getVideoID() {
+        return videoID;
     }
 
     @Override

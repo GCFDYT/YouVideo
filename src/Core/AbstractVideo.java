@@ -2,7 +2,7 @@ package Core;
 
 public interface AbstractVideo {
 
-    String getVideoId();
+    String getVideoID();
 
     String getTitle();
 

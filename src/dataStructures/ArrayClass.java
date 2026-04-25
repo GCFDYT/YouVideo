@@ -36,8 +36,8 @@ public class ArrayClass<E> implements Array<E> {
      * @param: dimension the initial capacity of the array
      */
 	@SuppressWarnings("unchecked")
-	public ArrayClass(int dimention) {
-		elems = (E[]) new Object[dimention];
+	public ArrayClass(int dimension) {
+		elems = (E[]) new Object[dimension];
 		counter = 0;
 	}
 
@@ -102,13 +102,11 @@ public class ArrayClass<E> implements Array<E> {
 	@Override
 	public E get(int pos) {
 		return elems[pos];
-
 	}
 
 	@Override
 	public int size() {
 		return counter;
-
 	}
 
 	@Override
