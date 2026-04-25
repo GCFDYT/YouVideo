@@ -43,17 +43,23 @@ public class ArrayClass<E> implements Array<E> {
 
 	@Override
 	public void insertLast(E e) {
-		if (counter == elems.length) resize();
-		elems[counter++] = e;
+		if (counter == elems.length) {
+            resize();
+            elems[counter++] = e;
+        }
 	}
 	
 	@Override
 	public void insertAt(E e, int pos) {
-		if (counter == elems.length) resize();
-		for(int i = counter-1; i >= pos; i--)
-			elems[i+1] = elems[i];
-		elems[pos] = e;
-		counter++;
+		if (counter == elems.length) {
+            resize();
+        }
+
+		for (int i = counter-1; i >= pos; i--) {
+            elems[i + 1] = elems[i];
+            elems[pos] = e;
+            counter++;
+        }
 	}
 
 	@Override
@@ -63,9 +69,10 @@ public class ArrayClass<E> implements Array<E> {
 
 	@Override
 	public void removeAt(int pos) {
-		for(int i = pos; i< counter-1; i++)
-			elems[i] = elems[i+1];
-		elems[--counter] = null;
+		for (int i = pos; i< counter-1; i++) {
+            elems[i] = elems[i + 1];
+            elems[--counter] = null;
+        }
 	}
 
 	@Override
@@ -77,11 +84,13 @@ public class ArrayClass<E> implements Array<E> {
 	public boolean searchBackward(E e) {
 		int i = counter-1;
 		boolean found = false;
-		while (i>=0 && !found)
-			if (elems[i].equals(e))
-				found = true;
-			else
-				i--;
+		while (i>=0 && !found) {
+            if (elems[i].equals(e)) {
+                found = true;
+            } else {
+                i--;
+            }
+        }
 		return found;
 	}
 
@@ -90,12 +99,17 @@ public class ArrayClass<E> implements Array<E> {
 		int i = 0;
 		int result = NOT_FOUND;
 		boolean found = false;
-		while (i<counter && !found)
-			if (elems[i].equals(e))
-				found = true;
-			else
-				i++;
-		if (found) result = i;
+		while (i<counter && !found) {
+            if (elems[i].equals(e)) {
+                found = true;
+            } else {
+                i++;
+            }
+
+            if (found) {
+                result = i;
+            }
+        }
 		return result;
 	}
 
@@ -111,7 +125,7 @@ public class ArrayClass<E> implements Array<E> {
 
 	@Override
 	public Iterator<E> iterator() {
-		return new ArrayIteratorClass<E>(elems, counter);
+		return new ArrayIteratorClass<>(elems, counter);
 	}
 
     /**
@@ -120,9 +134,10 @@ public class ArrayClass<E> implements Array<E> {
      */
 	@SuppressWarnings("unchecked")
 	private void resize() {
-		E tmp[] = (E[]) new Object[FACTOR*elems.length];
-		for (int i=0;i<counter; i++)
-			tmp[i] = elems[i];
+		E[] tmp = (E[]) new Object[FACTOR*elems.length];
+		for (int i = 0; i<counter ; i++) {
+            tmp[i] = elems[i];
+        }
 		elems = tmp;
 	}
 }

@@ -24,7 +24,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         PublishableVideo found = null;
         for (int i = 0; i < videos.size() && found == null; i++) {
             PublishableVideo video = videos.get(i);
-            if (video.getVideoId().equals(videoId)) {
+            if (video.getVideoID().equals(videoId)) {
                 found = video;
             }
         }
@@ -35,7 +35,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         PodcastEpisode found = null;
         for (int i = 0; i < episodes.size() && found == null; i++) {
             PodcastEpisode episode = episodes.get(i);
-            if (episode.getVideoId().equals(videoId)) {
+            if (episode.getVideoID().equals(videoId)) {
                 found = episode;
             }
         }
@@ -86,9 +86,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private void removeAllEpisodesFromPodcast(String podcastTitle) {
         for (int i = episodes.size() - 1; i >= 0; i--) {
             PodcastEpisode episode = episodes.get(i);
-            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
+            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoID());
             if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
-                removeEpisodeFromPodcastMapping(episode.getVideoId());
+                removeEpisodeFromPodcastMapping(episode.getVideoID());
                 episodes.removeAt(i);
             }
         }
@@ -124,7 +124,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         Array<PodcastEpisode> result = new ArrayClass<>();
         for (int i = 0; i < episodes.size(); i++) {
             PodcastEpisode episode = episodes.get(i);
-            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoId());
+            String episodePodcast = getPodcastTitleForEpisode(episode.getVideoID());
             if (episodePodcast != null && episodePodcast.equalsIgnoreCase(podcastTitle)) {
                 if (result.size() == 0) {
                     result.insertLast(episode);
@@ -172,22 +172,22 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return index;
     }
 
-    private boolean isVideoUsedInShow(String videoId) {
+    private boolean isVideoUsedInShow(String videoID) {
         boolean used = false;
         for (int i = 0; i < shows.size() && !used; i++) {
             Show show = shows.get(i);
-            if (show.videoID().equals(videoId)) {
+            if (show.videoID().equals(videoID)) {
                 used = true;
             }
         }
         return used;
     }
 
-    private int findVideoIndexToRemove(String videoId) {
+    private int findVideoIndexToRemove(String videoID) {
         int index = -1;
         for (int i = 0; i < videos.size() && index == -1; i++) {
             PublishableVideo video = videos.get(i);
-            if (video.getVideoId().equals(videoId)) {
+            if (video.getVideoID().equals(videoID)) {
                 index = i;
             }
         }
@@ -229,7 +229,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Status<String> addPremiumVideo(String videoId, int videoDuration, String url, String publisher,
+    public Status<String> addPremiumVideo(String videoID, int videoDuration, String url, String publisher,
                                           String title, String languageCode, String subtitleUrl,
                                           String subtitleLanguageCode) {
         if (isLanguageCodeInvalid(languageCode)) {
@@ -238,26 +238,26 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             return Status.error(Main.INV_SUBTITLE);
         } else if (isDurationOutOfBounds(videoDuration)) {
             return Status.error(Main.INV_VALUE);
-        } else if (findPublishableVideoById(videoId) != null) {
+        } else if (findPublishableVideoById(videoID) != null) {
             return Status.error(Main.VIDEO_ID_EXISTS);
         } else {
-            PremiumVideo video = new PremiumVideoImpl(videoId, videoDuration, url, publisher,
+            PremiumVideo video = new PremiumVideoImpl(videoID, videoDuration, url, publisher,
                     title, languageCode, subtitleUrl, subtitleLanguageCode);
             videos.insertLast(video);
-            return Status.success(Main.PREMIUM_VIDEO_CREATED, videoId);
+            return Status.success(Main.PREMIUM_VIDEO_CREATED, videoID);
         }
     }
 
     @Override
-    public Status<Void> addSubtitle(String videoId, String subtitleUrl, String subtitleLanguageCode) {
+    public Status<Void> addSubtitle(String videoID, String subtitleUrl, String subtitleLanguageCode) {
         if (isLanguageCodeInvalid(subtitleLanguageCode)) {
             return Status.error(Main.INV_SUBTITLE);
-        } else if (isVideoUnpublishable(videoId)) {
+        } else if (isVideoUnpublishable(videoID)) {
             return Status.error(Main.VIDEO_NOT_FOUND);
-        } else if (isVideoNotPremium(videoId)) {
+        } else if (isVideoNotPremium(videoID)) {
             return Status.error(Main.NOT_PREMIUM);
         } else {
-            PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
+            PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoID);
             Subtitle subtitle = new Subtitle(subtitleUrl, subtitleLanguageCode);
             premiumVideo.addSubtitle(subtitle);
             return Status.success(Main.SUBTITLE_ADDED);
@@ -265,11 +265,11 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Status<PremiumVideo> getSubtitleList(String videoId) {
-        if (isVideoNotPremium(videoId)) {
+    public Status<PremiumVideo> getSubtitleList(String videoID) {
+        if (isVideoNotPremium(videoID)) {
             return Status.error(Main.NO_PREMIUM_VIDEO);
         } else {
-            PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoId);
+            PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideoById(videoID);
             // Main gets the whole PremiumVideo, so it can call getTitle() and getSubtitles() directly
             return Status.successWithData(premiumVideo);
         }
@@ -286,15 +286,15 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Status<Void> removeVideo(String videoId) {
-        if (isVideoUnpublishable(videoId)) {
+    public Status<Void> removeVideo(String videoID) {
+        if (isVideoUnpublishable(videoID)) {
             return Status.error(Main.VIDEO_NOT_FOUND);
-        } else if (isPodcastEpisode(videoId)) {
+        } else if (isPodcastEpisode(videoID)) {
             return Status.error(Main.CANT_REMOVE_EPISODE);
-        } else if (isVideoUsedInShow(videoId)) {
+        } else if (isVideoUsedInShow(videoID)) {
             return Status.error(Main.CANT_REMOVE_USED_VIDEO);
         } else {
-            int indexToRemove = findVideoIndexToRemove(videoId);
+            int indexToRemove = findVideoIndexToRemove(videoID);
             if (indexToRemove != -1) {
                 videos.removeAt(indexToRemove);
                 return Status.success(Main.VIDEO_REMOVED);

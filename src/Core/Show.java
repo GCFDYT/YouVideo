@@ -6,7 +6,7 @@ public interface Show {
 
     String title();
 
-    String date();
-
     String videoID();
+
+    String date();
 }

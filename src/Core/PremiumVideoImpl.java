@@ -9,7 +9,8 @@ public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVid
     private final Array<Subtitle> subtitles;
 
     public PremiumVideoImpl(String videoID, int videoDuration, String url, String publisher,
-                            String title, String language, String subtitleUrl, String subtitleLanguageCode) {
+                            String title, String language, String subtitleUrl,
+                            String subtitleLanguageCode) {
 
         super(videoID, videoDuration, url, publisher, title, language);
         subtitles = new ArrayClass<>();

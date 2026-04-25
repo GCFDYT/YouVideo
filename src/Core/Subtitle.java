@@ -9,5 +9,4 @@ public record Subtitle(String subtitleUrl, String subtitleLanguage) {
     public String getSubtitleLanguage() {
         return subtitleLanguage;
     }
-
 }
