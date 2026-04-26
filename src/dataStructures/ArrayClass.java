@@ -84,7 +84,7 @@ public class ArrayClass<E> implements Array<E> {
 	public boolean searchBackward(E e) {
 		int i = counter-1;
 		boolean found = false;
-		while (i>= 0 && !found) {
+		while (i >= 0 && !found) {
             if (elems[i].equals(e)) {
                 found = true;
             } else {
@@ -99,7 +99,7 @@ public class ArrayClass<E> implements Array<E> {
 		int i = 0;
 		int result = NOT_FOUND;
 		boolean found = false;
-		while (i<counter && !found) {
+		while (i < counter && !found) {
             if (elems[i].equals(e)) {
                 found = true;
             } else {
@@ -135,9 +135,7 @@ public class ArrayClass<E> implements Array<E> {
 	@SuppressWarnings("unchecked")
 	private void resize() {
 		E[] tmp = (E[]) new Object[FACTOR*elems.length];
-		for (int i = 0; i<counter ; i++) {
-            tmp[i] = elems[i];
-        }
+        if (counter >= 0) System.arraycopy(elems, 0, tmp, 0, counter);
 		elems = tmp;
 	}
 }

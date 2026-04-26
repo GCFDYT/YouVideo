@@ -9,12 +9,12 @@ public class ArrayIteratorClass<E> implements Iterator<E> {
     /**
      * Array of elements to iterate over
      */
-    private E[] elems;
+    private final E[] elems;
     
     /**
      * Number of elements in the array
      */
-    private int counter;
+    private final int counter;
     
     /**
      * Index of the current element

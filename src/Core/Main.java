@@ -155,7 +155,7 @@ public class Main {
 
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
-        String videoId = fields[IDX_VIDEO_ID];
+        String videoID = fields[IDX_VIDEO_ID];
         int duration = Integer.parseInt(fields[IDX_VIDEO_DURATION]);
         String language = fields[IDX_LANGUAGE_CODE];
 
@@ -163,11 +163,12 @@ public class Main {
             System.out.println(INV_LANGUAGE);
         } else if (duration <= 0) {
             System.out.println(INV_VALUE);
-        } else if (platform.hasVideo(videoId)) {
+        } else if (platform.hasVideo(videoID)) {
             System.out.println(VIDEO_ID_EXISTS);
         } else {
-            platform.addPublishableVideo(videoId, duration, fields[IDX_URL], fields[IDX_PUBLISHER], fields[IDX_TITLE], language);
-            System.out.printf(VIDEO_CREATED + "%n", videoId);
+            platform.addPublishableVideo(videoID, duration, fields[IDX_URL],
+                    fields[IDX_PUBLISHER], fields[IDX_TITLE], language);
+            System.out.printf(VIDEO_CREATED + "%n", videoID);
         }
     }
 
@@ -176,7 +177,7 @@ public class Main {
         String subtitleUrl = readTokenAndConsumeLine(scanner);
         String subtitleLanguage = readTokenAndConsumeLine(scanner);
 
-        String videoId = fields[IDX_VIDEO_ID];
+        String videoID = fields[IDX_VIDEO_ID];
         int duration = Integer.parseInt(fields[IDX_VIDEO_DURATION]);
         String language = fields[IDX_LANGUAGE_CODE];
 
@@ -186,11 +187,12 @@ public class Main {
             System.out.println(INV_SUBTITLE);
         } else if (duration <= 0) {
             System.out.println(INV_VALUE);
-        } else if (platform.hasVideo(videoId)) {
+        } else if (platform.hasVideo(videoID)) {
             System.out.println(VIDEO_ID_EXISTS);
         } else {
-            platform.addPremiumVideo(videoId, duration, fields[IDX_URL], fields[IDX_PUBLISHER], fields[IDX_TITLE], language, subtitleUrl, subtitleLanguage);
-            System.out.printf(PREMIUM_VIDEO_CREATED + "%n", videoId);
+            platform.addPremiumVideo(videoID, duration, fields[IDX_URL], fields[IDX_PUBLISHER],
+                    fields[IDX_TITLE], language, subtitleUrl, subtitleLanguage);
+            System.out.printf(PREMIUM_VIDEO_CREATED + "%n", videoID);
         }
     }
 
@@ -212,52 +214,55 @@ public class Main {
     }
 
     private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
 
-        if (!platform.hasPublishableVideo(videoId)) {
-            System.out.printf(PUBLISHABLE_NOT_FOUND + "%n", videoId);
+        if (!platform.hasPublishableVideo(videoID)) {
+            System.out.printf(PUBLISHABLE_NOT_FOUND + "%n", videoID);
         } else {
-            PublishableVideo video = platform.getVideo(videoId);
+            PublishableVideo video = platform.getVideo(videoID);
             Locale locale = Locale.of(video.getLanguageCode());
-
             if (video instanceof PremiumVideo) {
-                System.out.printf(PREMIUM_VIDEO_DISPLAY, video.getVideoID(), video.getVideoDuration(), video.getTitle());
+                System.out.printf(PREMIUM_VIDEO_DISPLAY, video.getVideoID(),
+                        video.getVideoDuration(), video.getTitle());
             } else {
-                System.out.printf(VIDEO_DISPLAY, video.getVideoID(), video.getVideoDuration(), video.getTitle());
+                System.out.printf(VIDEO_DISPLAY, video.getVideoID(),
+                        video.getVideoDuration(), video.getTitle());
             }
-            System.out.printf(VIDEO_FILE_INFO, video.getUrl(), video.getPublisher(), locale.getDisplayLanguage().toUpperCase());
+            System.out.printf(VIDEO_FILE_INFO, video.getUrl(), video.getPublisher(),
+                    locale.getDisplayLanguage().toUpperCase());
         }
     }
 
     private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
 
-        if (!platform.isPremiumVideo(videoId)) {
+        if (!platform.isPremiumVideo(videoID)) {
             System.out.println(NO_PREMIUM_VIDEO);
         } else {
-            PublishableVideo video = platform.getVideo(videoId);
+            PublishableVideo video = platform.getVideo(videoID);
             System.out.printf(SUBTITLES_HEADER + "%n", video.getTitle());
 
-            Iterator<Subtitle> it = platform.getSubtitles(videoId);
+            Iterator<Subtitle> it = platform.getSubtitles(videoID);
             while (it.hasNext()) {
                 Subtitle subtitle = it.next();
                 Locale locale = Locale.of(subtitle.getSubtitleLanguage());
-                System.out.printf(SUBTITLE_ENTRY + "%n", subtitle.getSubtitleUrl(), locale.getDisplayLanguage().toUpperCase());
+                System.out.printf(SUBTITLE_ENTRY + "%n", subtitle.getSubtitleUrl(),
+                        locale.getDisplayLanguage().toUpperCase());
             }
         }
     }
 
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
 
-        if (!platform.hasVideo(videoId)) {
+        if (!platform.hasVideo(videoID)) {
             System.out.println(VIDEO_NOT_FOUND);
-        } else if (platform.hasPodcastEpisode(videoId)) {
+        } else if (platform.hasPodcastEpisode(videoID)) {
             System.out.println(CANT_REMOVE_EPISODE);
-        } else if (platform.isVideoUsedInShow(videoId)) {
+        } else if (platform.isVideoUsedInShow(videoID)) {
             System.out.println(CANT_REMOVE_USED_VIDEO);
         } else {
-            platform.removeVideo(videoId);
+            platform.removeVideo(videoID);
             System.out.println(VIDEO_REMOVED);
         }
     }
@@ -279,7 +284,7 @@ public class Main {
 
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
         int duration = scanner.nextInt();
         String url = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
@@ -288,12 +293,12 @@ public class Main {
             System.out.println(INV_VALUE);
         } else if (!platform.hasPodcast(title)) {
             System.out.println(PODCAST_NOT_FOUND);
-        } else if (platform.hasVideo(videoId)) {
+        } else if (platform.hasVideo(videoID)) {
             System.out.println(EPISODE_ID_EXISTS);
         } else if (!platform.isValidEpisodeDate(title, date)) {
             System.out.println(INV_EPISODE_DATE);
         } else {
-            platform.addPodcastEpisode(title, videoId, duration, url, date);
+            platform.addPodcastEpisode(title, videoID, duration, url, date);
             System.out.println(EPISODE_ADDED);
         }
     }
@@ -306,10 +311,12 @@ public class Main {
         } else {
             Podcast podcast = platform.getPodcast(title);
             Locale locale = Locale.of(podcast.getLanguageCode());
-            System.out.printf(PODCAST_INFO + "%n", podcast.getTitle(), podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
+            System.out.printf(PODCAST_INFO + "%n", podcast.getTitle(),
+                    podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
 
             if (podcast.hasEpisodes()) {
-                System.out.printf(PODCAST_LATEST_EPISODE + "%n", podcast.getLatestEpisode().getDate());
+                System.out.printf(PODCAST_LATEST_EPISODE + "%n",
+                        podcast.getLatestEpisode().getDate());
             }
         }
     }
@@ -328,7 +335,8 @@ public class Main {
                 Iterator<PodcastEpisode> it = platform.getPodcastEpisodes(title);
                 while (it.hasNext()) {
                     PodcastEpisode ep = it.next();
-                    System.out.printf(EPISODE_ENTRY + "%n", ep.getVideoID(), ep.getVideoDuration(), ep.getDate());
+                    System.out.printf(EPISODE_ENTRY + "%n", ep.getVideoID(),
+                            ep.getVideoDuration(), ep.getDate());
                     System.out.printf(EPISODE_URL + "%n", ep.getUrl());
                 }
             }
@@ -346,7 +354,8 @@ public class Main {
             while (it.hasNext()) {
                 Podcast podcast = it.next();
                 Locale locale = Locale.of(podcast.getLanguageCode());
-                System.out.printf(PODCAST_ENTRY + "%n", podcast.getTitle(), podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
+                System.out.printf(PODCAST_ENTRY + "%n", podcast.getTitle(),
+                        podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
             }
         }
     }
@@ -364,17 +373,17 @@ public class Main {
 
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
-        String videoId = readTokenAndConsumeLine(scanner);
+        String videoID = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
 
-        if (!platform.hasPublishableVideo(videoId)) {
+        if (!platform.hasPublishableVideo(videoID)) {
             System.out.println(SHOW_NOT_FOUND);
         } else {
-            String videoTitle = platform.getVideo(videoId).getTitle();
+            String videoTitle = platform.getVideo(videoID).getTitle();
             if (platform.hasShow(videoTitle)) {
                 System.out.println(SHOW_EXISTS);
             } else {
-                platform.addShow(author, videoId, date);
+                platform.addShow(author, videoID, date);
                 System.out.println(SHOW_CREATED);
             }
         }

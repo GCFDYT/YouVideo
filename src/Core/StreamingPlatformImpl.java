@@ -12,68 +12,82 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private final Array<Show> shows;
 
     public StreamingPlatformImpl() {
-        publishableVideos = new ArrayClass<>();
-        podcasts = new ArrayClass<>();
-        shows = new ArrayClass<>();
+        publishableVideos = new ArrayClass<>(50);
+        podcasts = new ArrayClass<>(50);
+        shows = new ArrayClass<>(50);
     }
-
-    // --- Internal Helpers ---
 
     private PublishableVideo findPublishableVideo(String videoID) {
+        PublishableVideo result = null;
         Iterator<PublishableVideo> iterator = publishableVideos.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext() && result == null) {
             PublishableVideo video = iterator.next();
-            if (video.getVideoID().equalsIgnoreCase(videoID)) return video;
-        }
-        return null;
-    }
-
-    private PodcastEpisode findPodcastEpisode(String videoID) {
-        Iterator<Podcast> podcastIterator = podcasts.iterator();
-        while (podcastIterator.hasNext()) {
-            Podcast podcast = podcastIterator.next();
-            Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
-            while (episodeIterator.hasNext()) {
-                PodcastEpisode episode = episodeIterator.next();
-                if (episode.getVideoID().equalsIgnoreCase(videoID)) return episode;
+            if (video.getVideoID().equalsIgnoreCase(videoID)) {
+                result = video;
             }
         }
-        return null;
+        return result;
     }
 
     private Podcast findPodcast(String title) {
+        Podcast result = null;
         Iterator<Podcast> iterator = podcasts.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext() && result == null) {
             Podcast podcast = iterator.next();
-            if (podcast.getTitle().equalsIgnoreCase(title)) return podcast;
+            if (podcast.getTitle().equalsIgnoreCase(title)) {
+                result = podcast;
+            }
         }
-        return null;
+        return result;
     }
 
     private Show findShow(String title) {
+        Show result = null;
         Iterator<Show> iterator = shows.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext() && result == null) {
             Show show = iterator.next();
-            if (show.title().equalsIgnoreCase(title)) return show;
+            if (show.title().equalsIgnoreCase(title)) {
+                result = show;
+            }
         }
-        return null;
+        return result;
     }
-
-    // --- Pre-condition Checks ---
 
     @Override
     public boolean hasVideo(String videoID) {
-        return hasPublishableVideo(videoID) || hasPodcastEpisode(videoID);
+        boolean hasPublishable = hasPublishableVideo(videoID);
+        boolean hasPodcast = hasPodcastEpisode(videoID);
+        return hasPublishable || hasPodcast;
     }
 
     @Override
     public boolean hasPublishableVideo(String videoID) {
-        return findPublishableVideo(videoID) != null;
+        boolean found = false;
+        Iterator<PublishableVideo> iterator = publishableVideos.iterator();
+        while (iterator.hasNext() && !found) {
+            PublishableVideo video = iterator.next();
+            if (video.getVideoID().equalsIgnoreCase(videoID)) {
+                found = true;
+            }
+        }
+        return found;
     }
 
     @Override
     public boolean hasPodcastEpisode(String videoID) {
-        return findPodcastEpisode(videoID) != null;
+        boolean found = false;
+        Iterator<Podcast> podcastIterator = podcasts.iterator();
+        while (podcastIterator.hasNext() && !found) {
+            Podcast podcast = podcastIterator.next();
+            Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
+            while (episodeIterator.hasNext() && !found) {
+                PodcastEpisode episode = episodeIterator.next();
+                if (episode.getVideoID().equalsIgnoreCase(videoID)) {
+                    found = true;
+                }
+            }
+        }
+        return found;
     }
 
     @Override
@@ -84,50 +98,78 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcast(String title) {
-        return findPodcast(title) != null;
+        boolean found = false;
+        Iterator<Podcast> iterator = podcasts.iterator();
+        while (iterator.hasNext() && !found) {
+            Podcast podcast = iterator.next();
+            if (podcast.getTitle().equalsIgnoreCase(title)) {
+                found = true;
+            }
+        }
+        return found;
     }
 
     @Override
     public boolean hasShow(String title) {
-        return findShow(title) != null;
+        boolean found = false;
+        Iterator<Show> iterator = shows.iterator();
+        while (iterator.hasNext() && !found) {
+            Show show = iterator.next();
+            if (show.title().equalsIgnoreCase(title)) {
+                found = true;
+            }
+        }
+        return found;
     }
 
     @Override
     public boolean isValidLanguageCode(String code) {
+        boolean valid = false;
         String[] languages = Locale.getISOLanguages();
-        for (int i = 0; i < languages.length; i++) {
-            if (languages[i].equalsIgnoreCase(code)) return true;
+        int i = 0;
+        while (i < languages.length && !valid) {
+            if (languages[i].equalsIgnoreCase(code)) {
+                valid = true;
+            }
+            i++;
         }
-        return false;
+        return valid;
     }
 
     @Override
     public boolean isVideoUsedInShow(String videoID) {
+        boolean found = false;
         Iterator<Show> it = shows.iterator();
-        while (it.hasNext()) {
+        while (it.hasNext() && !found) {
             Show s = it.next();
-            if (s.videoID().equalsIgnoreCase(videoID)) return true;
+            if (s.videoID().equalsIgnoreCase(videoID)) {
+                found = true;
+            }
         }
-        return false;
+        return found;
     }
 
     @Override
     public boolean isValidEpisodeDate(String podcastTitle, String date) {
+        boolean valid = true;
         Podcast p = findPodcast(podcastTitle);
         if (p != null && p.hasEpisodes()) {
-            return date.compareTo(p.getLatestEpisode().getDate()) >= 0;
+            valid = date.compareTo(p.getLatestEpisode().getDate()) >= 0;
         }
-        return true;
+        return valid;
     }
 
     @Override
     public boolean hasAuthorPodcasts(String author) {
+        boolean found = false;
         Iterator<Podcast> it = podcasts.iterator();
-        while (it.hasNext()) {
+        while (it.hasNext() && !found) {
             Podcast p = it.next();
-            if (p.getAuthor().equalsIgnoreCase(author)) return true;
+            if (p.getAuthor().equalsIgnoreCase(author)) {
+                found = true;
+            }
         }
-        return false;
+        return found;
     }
 
     // --- Commands ---
@@ -150,11 +192,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeVideo(String videoID) {
-        for (int i = 0; i < publishableVideos.size(); i++) {
+        boolean removed = false;
+        int i = 0;
+        while (i < publishableVideos.size() && !removed) {
             if (publishableVideos.get(i).getVideoID().equalsIgnoreCase(videoID)) {
                 publishableVideos.removeAt(i);
-                break;
+                removed = true;
             }
+            i++;
         }
     }
 
@@ -171,11 +216,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removePodcast(String title) {
-        for (int i = 0; i < podcasts.size(); i++) {
+        boolean removed = false;
+        int i = 0;
+        while (i < podcasts.size() && !removed) {
             if (podcasts.get(i).getTitle().equalsIgnoreCase(title)) {
                 podcasts.removeAt(i);
-                break;
+                removed = true;
             }
+            i++;
         }
     }
 
@@ -187,11 +235,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeShow(String title) {
-        for (int i = 0; i < shows.size(); i++) {
+        boolean removed = false;
+        int i = 0;
+        while (i < shows.size() && !removed) {
             if (shows.get(i).title().equalsIgnoreCase(title)) {
                 shows.removeAt(i);
-                break;
+                removed = true;
             }
+            i++;
         }
     }
 
@@ -221,8 +272,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public Iterator<Podcast> getAuthorPodcasts(String author) {
         Array<Podcast> authorPods = new ArrayClass<>();
-        Iterator<Podcast> it = podcasts.iterator();
-        while (it.hasNext()) {
+        for (Iterator<Podcast> it = podcasts.iterator(); it.hasNext(); ) {
             Podcast p = it.next();
             if (p.getAuthor().equalsIgnoreCase(author)) {
                 authorPods.insertLast(p);
