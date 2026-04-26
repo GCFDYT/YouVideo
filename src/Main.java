@@ -53,7 +53,7 @@ public class Main {
     private static final String VIDEO_NOT_FOUND = "Video does not exist.";
     private static final String NOT_PREMIUM = "This operation requires a Premium video.";
     private static final String NO_PREMIUM_VIDEO = "No Premium Video with ID.";
-    private static final String SUBTITLE_ADDED = "SubtitleImpl added successfully.";
+    private static final String SUBTITLE_ADDED = "Subtitle added successfully.";
     private static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     private static final String SUBTITLE_ENTRY = "- %s (%s)";
     private static final String VIDEO_REMOVED = "Video removed successfully.";
