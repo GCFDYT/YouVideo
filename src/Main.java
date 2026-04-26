@@ -1,8 +1,15 @@
-package Core;
-
 import dataStructures.Iterator;
+import Core.StreamingPlatform;
+import Core.StreamingPlatformImpl;
+import Core.PublishableVideo;
+import Core.PremiumVideo;
+import Core.SubtitleImpl;
+import Core.Podcast;
+import Core.PodcastEpisode;
+import Core.Show;
 import java.util.Locale;
 import java.util.Scanner;
+
 
 /**
  * Main class for the You Video streaming platform application.
