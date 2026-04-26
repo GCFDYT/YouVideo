@@ -64,24 +64,26 @@ public class PodcastImpl implements Podcast {
 
     @Override
     public PodcastEpisode getLatestEpisode() {
+        PodcastEpisode result;
         if (hasEpisodes()) {
-            return episodes.get(0);
+            result = episodes.get(0);
         } else {
-            return null;
+            result = null;
         }
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null || getClass() != obj.getClass()) {
-            return false;
+        boolean result;
+        if (!(obj instanceof PodcastImpl that)) {
+            result = false;
         } else {
-            PodcastImpl that = (PodcastImpl) obj;
-            return title.equalsIgnoreCase(that.title);
+            result = title.equalsIgnoreCase(that.title);
         }
+        return result;
     }
+
 
     @Override
     public int hashCode() {

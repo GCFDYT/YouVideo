@@ -65,6 +65,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return result;
     }
 
+
     // --- Pre-condition Checks ---
 
     @Override
@@ -111,8 +112,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasShow(String title) {
-        Show searchKey = new ShowImpl("", title, "", "");
-        return shows.searchForward(searchKey);
+        return findShow(title) != null;
     }
 
     @Override
@@ -227,10 +227,12 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeShow(String title) {
-        Show searchKey = new ShowImpl("", title, "", "");
-        int index = shows.searchIndexOf(searchKey);
-        if (index != -1) {
-            shows.removeAt(index);
+        Show toRemove = findShow(title);
+        if (toRemove != null) {
+            int index = shows.searchIndexOf(toRemove);
+            if (index != -1) {
+                shows.removeAt(index);
+            }
         }
     }
 
@@ -254,7 +256,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public Iterator<PodcastEpisode> getPodcastEpisodes(String title) {
-        return findPodcast(title).getEpisodes();
+        Podcast podcast = findPodcast(title);
+        Iterator<PodcastEpisode> result;
+        if (podcast == null) {
+            result = null;
+        } else {
+            result = podcast.getEpisodes();
+        }
+        return result;
     }
 
     @Override

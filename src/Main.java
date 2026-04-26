@@ -184,12 +184,9 @@ public class Main {
                 case DELETE_SHOW -> deleteShow(scanner, platform);
                 case DISPLAY_CMD_LIST -> System.out.println(HELP_MSG);
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
-                default -> {
-                    System.out.println(CMD_ERR);
-                    consumeLine(scanner);
-                }
+                default -> System.out.println(CMD_ERR);
             }
-        } while (!EXIT_PROGRAM.equals(command.toLowerCase()));
+        } while (!EXIT_PROGRAM.equalsIgnoreCase(command));
     }
 
     /**
