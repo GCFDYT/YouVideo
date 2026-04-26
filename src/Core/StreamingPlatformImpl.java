@@ -29,6 +29,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     // --- Internal Helpers ---
 
+    /**
+     * Searches for a publishable video in the platform by its unique ID.
+     * Checks iteratively through the collection of publishable videos ignoring case.
+     *
+     * @param videoID the unique identifier of the video to search for
+     * @return the {@code PublishableVideo} if found, or {@code null} if no video matches the ID
+     */
     private PublishableVideo findPublishableVideo(String videoID) {
         PublishableVideo result = null;
         Iterator<PublishableVideo> iterator = publishableVideos.iterator();
@@ -41,7 +48,17 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return result;
     }
 
+    /**
+     * Standardizes the casing of an author or publisher's name.
+     * Checks existing videos, podcasts, and shows to see if the author/publisher
+     * already exists in the system. If they do, it returns the exact letter casing
+     * used in their first recorded entry to maintain a consistent signature.
+     *
+     * @param name the name of the author or publisher to check
+     * @return the standardized name string if a prior record exists, or the original provided name if it is a new author
+     */
     private String getStandardizedName(String name) {
+        // 1. Check if they already exist as a Video Publisher
         Iterator<PublishableVideo> itVid = publishableVideos.iterator();
         while (itVid.hasNext()) {
             PublishableVideo v = itVid.next();
@@ -49,13 +66,16 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                 return v.getPublisher();
             }
         }
+
+        // 2. Check if they already exist as a Podcast Author
         Iterator<Podcast> itPod = podcasts.iterator();
         while (itPod.hasNext()) {
             Podcast p = itPod.next();
             if (p.getAuthor().equalsIgnoreCase(name)) {
-                return p.getAuthor(); //
+                return p.getAuthor();
             }
         }
+
         // 3. Check if they already exist as a Show Author
         Iterator<Show> itShow = shows.iterator();
         while (itShow.hasNext()) {
@@ -64,10 +84,18 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                 return s.author();
             }
         }
+
         // If no match is found anywhere, return the exact casing they just typed
         return name;
     }
 
+    /**
+     * Searches for a podcast in the platform by its title.
+     * Checks iteratively through the collection of podcasts ignoring case.
+     *
+     * @param title the title of the podcast to search for
+     * @return the {@code Podcast} if found, or {@code null} if no podcast matches the title
+     */
     private Podcast findPodcast(String title) {
         Podcast result = null;
         Iterator<Podcast> iterator = podcasts.iterator();
@@ -80,6 +108,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return result;
     }
 
+    /**
+     * Searches for a show in the platform by its title.
+     * Checks iteratively through the collection of shows ignoring case.
+     *
+     * @param title the title of the show to search for
+     * @return the {@code Show} if found, or {@code null} if no show matches the title
+     */
     private Show findShow(String title) {
         Show result = null;
         Iterator<Show> iterator = shows.iterator();
@@ -91,7 +126,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         }
         return result;
     }
-
 
     // --- Pre-condition Checks ---
 
