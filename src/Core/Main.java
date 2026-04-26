@@ -393,7 +393,7 @@ public class Main {
         } else if (!platform.isValidEpisodeDate(title, date)) {
             System.out.println(INV_EPISODE_DATE);
         } else {
-            platform.addPodcastEpisode(title, videoID, duration, url, date, episodeTitle); // ← passar
+            platform.addPodcastEpisode(title, videoID, duration, url, date, episodeTitle);
             System.out.println(EPISODE_ADDED);
         }
     }
