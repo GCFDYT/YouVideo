@@ -531,7 +531,8 @@ public class Main {
         } else {
             Show show = platform.getShow(title);
             System.out.printf(SHOW_INFO + "%n", show.date(), show.author());
-            System.out.printf(SHOW_VIDEO + "%n", show.videoID());
+            PublishableVideo video = platform.getVideo(show.videoID());
+            System.out.printf(SHOW_VIDEO + "%n", video.getTitle());
         }
     }
 

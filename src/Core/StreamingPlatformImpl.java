@@ -106,8 +106,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcast(String title) {
-        Podcast searchKey = new PodcastImpl(title, "", "");
-        return podcasts.searchForward(searchKey);
+        return findPodcast(title) != null;
     }
 
     @Override
@@ -212,10 +211,12 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removePodcast(String title) {
-        Podcast searchKey = new PodcastImpl(title, "", "");
-        int index = podcasts.searchIndexOf(searchKey);
-        if (index != -1) {
-            podcasts.removeAt(index);
+        Podcast toRemove = findPodcast(title);
+        if (toRemove != null) {
+            int index = podcasts.searchIndexOf(toRemove);
+            if (index != -1) {
+                podcasts.removeAt(index);
+            }
         }
     }
 

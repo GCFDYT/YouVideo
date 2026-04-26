@@ -67,7 +67,8 @@ public interface StreamingPlatform {
     boolean isVideoUsedInShow(String videoID);
 
     /**
-     * Checks if a new episode <code>date</code> is greater than or equal to the latest episode date of the podcast.
+     * Checks if a new episode <code>date</code> is greater than
+     * or equal to the latest episode date of the podcast.
      * @pre hasPodcast(podcastTitle)
      * @param podcastTitle - the title of the podcast.
      * @param date - the release date of the new episode.
@@ -99,7 +100,8 @@ public interface StreamingPlatform {
 
     /**
      * Adds a new premium video to the system.
-     * @pre !hasVideo(videoID) && isValidLanguageCode(languageCode) && isValidLanguageCode(subtitleLanguageCode) && videoDuration > 0
+     * @pre !hasVideo(videoID) && isValidLanguageCode(languageCode) &&
+     * isValidLanguageCode(subtitleLanguageCode) && videoDuration > 0
      * @param videoID - the unique identifier of the video.
      * @param videoDuration - the duration of the video in minutes.
      * @param url - the file URL of the video.
