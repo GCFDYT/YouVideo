@@ -286,7 +286,6 @@ public class Main {
             System.out.printf(PUBLISHABLE_NOT_FOUND + "%n", videoID);
         } else {
             PublishableVideo video = platform.getVideo(videoID);
-            Locale locale = Locale.of(video.getLanguageCode());
             if (video instanceof PremiumVideo) {
                 System.out.printf(PREMIUM_VIDEO_DISPLAY, video.getVideoID(),
                         video.getVideoDuration(), video.getTitle());
@@ -295,7 +294,7 @@ public class Main {
                         video.getVideoDuration(), video.getTitle());
             }
             System.out.printf(VIDEO_FILE_INFO, video.getUrl(), video.getPublisher(),
-                    locale.getDisplayLanguage().toUpperCase());
+                    video.getLanguageCode().toUpperCase());
         }
     }
 
@@ -413,10 +412,8 @@ public class Main {
             System.out.println(PODCAST_NOT_FOUND);
         } else {
             Podcast podcast = platform.getPodcast(title);
-            Locale locale = Locale.of(podcast.getLanguageCode());
             System.out.printf(PODCAST_INFO + "%n", podcast.getTitle(),
-                    podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
-
+                    podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
             if (podcast.hasEpisodes()) {
                 System.out.printf(PODCAST_LATEST_EPISODE + "%n",
                         podcast.getLatestEpisode().getDate());
@@ -468,9 +465,8 @@ public class Main {
             Iterator<Podcast> it = platform.getAuthorPodcasts(author);
             while (it.hasNext()) {
                 Podcast podcast = it.next();
-                Locale locale = Locale.of(podcast.getLanguageCode());
                 System.out.printf(PODCAST_ENTRY + "%n", podcast.getTitle(),
-                        podcast.getAuthor(), locale.getDisplayLanguage().toUpperCase());
+                        podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
             }
         }
     }
