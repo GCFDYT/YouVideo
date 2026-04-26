@@ -58,9 +58,9 @@ public class ArrayClass<E> implements Array<E> {
 
 		for (int i = counter-1; i >= pos; i--) {
             elems[i + 1] = elems[i];
-            elems[pos] = e;
-            counter++;
         }
+        elems[pos] = e;
+        counter++;
 	}
 
 	@Override

@@ -59,16 +59,17 @@ public class PodcastImpl implements Podcast {
 
     @Override
     public boolean hasEpisodes() {
-        return episodes.size() > 0;
+        return episodes.iterator().hasNext();
     }
 
     @Override
     public PodcastEpisode getLatestEpisode() {
-        PodcastEpisode result;
+        PodcastEpisode result = null;
         if (hasEpisodes()) {
-            result = episodes.get(0);
-        } else {
-            result = null;
+            Iterator<PodcastEpisode> it = episodes.iterator();
+            if (it.hasNext()) {
+                result = it.next();
+            }
         }
         return result;
     }
@@ -83,7 +84,6 @@ public class PodcastImpl implements Podcast {
         }
         return result;
     }
-
 
     @Override
     public int hashCode() {

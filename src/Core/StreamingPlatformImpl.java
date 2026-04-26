@@ -106,7 +106,15 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcast(String title) {
-        return findPodcast(title) != null;
+        boolean found = false;
+        Iterator<Podcast> it = podcasts.iterator();
+        while (it.hasNext() && !found) {
+            Podcast p = it.next();
+            if (p.getTitle().equalsIgnoreCase(title)) {
+                found = true;
+            }
+        }
+        return found;
     }
 
     @Override
@@ -211,12 +219,18 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removePodcast(String title) {
-        Podcast toRemove = findPodcast(title);
-        if (toRemove != null) {
-            int index = podcasts.searchIndexOf(toRemove);
-            if (index != -1) {
-                podcasts.removeAt(index);
+        int index = -1;
+        Iterator<Podcast> it = podcasts.iterator();
+        int i = 0;
+        while (it.hasNext() && index == -1) {
+            Podcast p = it.next();
+            if (p.getTitle().equalsIgnoreCase(title)) {
+                index = i;
             }
+            i++;
+        }
+        if (index != -1) {
+            podcasts.removeAt(index);
         }
     }
 
