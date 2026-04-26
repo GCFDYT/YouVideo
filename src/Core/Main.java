@@ -24,7 +24,7 @@ public class Main {
     private static final String DISPLAY_CMD_LIST = "help";
     private static final String EXIT_PROGRAM = "exit";
 
-    // Output messages
+    // Output messages:
     private static final String CMD_ERR = "Unknown command. Type help to see available commands.";
     private static final String EXIT_MSG = "Bye!";
     private static final String VIDEO_CREATED = "Video %s created successfully.";
