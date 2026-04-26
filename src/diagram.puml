@@ -1,0 +1,209 @@
+@startuml
+' We removed the "hide empty members" command so everything shows up now!
+
+' --- Interfaces ---
+interface StreamingPlatform {
+    + hasVideo(videoID: String): boolean
+    + hasPublishableVideo(videoID: String): boolean
+    + hasPodcastEpisode(videoID: String): boolean
+    + isPremiumVideo(videoID: String): boolean
+    + hasPodcast(title: String): boolean
+    + hasShow(title: String): boolean
+    + isValidLanguageCode(code: String): boolean
+    + isVideoUsedInShow(videoID: String): boolean
+    + isValidEpisodeDate(podcastTitle: String, date: String): boolean
+    + hasAuthorPodcasts(author: String): boolean
+    + addPublishableVideo(videoID: String, videoDuration: int, url: String, publisher: String, title: String, languageCode: String): void
+    + addPremiumVideo(videoID: String, videoDuration: int, url: String, publisher: String, title: String, languageCode: String, subtitleUrl: String, subtitleLanguageCode: String): void
+    + addSubtitle(videoID: String, subtitleUrl: String, subtitleLanguageCode: String): void
+    + removeVideo(videoID: String): void
+    + addPodcast(title: String, author: String, languageCode: String): void
+    + addPodcastEpisode(title: String, videoID: String, videoDuration: int, episodeUrl: String, date: String): void
+    + removePodcast(title: String): void
+    + addShow(author: String, videoID: String, date: String): void
+    + removeShow(title: String): void
+    + getVideo(videoID: String): PublishableVideo
+    + getSubtitles(videoID: String): Iterator<Subtitle>
+    + getPodcast(title: String): Podcast
+    + getPodcastEpisodes(title: String): Iterator<PodcastEpisode>
+    + getAuthorPodcasts(author: String): Iterator<Podcast>
+    + getShow(title: String): Show
+}
+
+interface AbstractVideo {
+    + getVideoID(): String
+    + getTitle(): String
+    + getVideoDuration(): int
+}
+
+interface PublishableVideo {
+    + getUrl(): String
+    + getPublisher(): String
+    + getLanguageCode(): String
+}
+
+interface PremiumVideo {
+    + addSubtitle(newSubtitle: Subtitle): void
+    + getSubtitles(): Iterator<Subtitle>
+}
+
+interface PodcastEpisode {
+    + getUrl(): String
+    + getDate(): String
+}
+
+interface Podcast {
+    + getTitle(): String
+    + getAuthor(): String
+    + getLanguageCode(): String
+    + addEpisode(episode: PodcastEpisode): void
+    + getEpisodes(): Iterator<PodcastEpisode>
+    + hasEpisodes(): boolean
+    + getLatestEpisode(): PodcastEpisode
+}
+
+interface Show {
+    + author(): String
+    + title(): String
+    + videoID(): String
+    + date(): String
+}
+
+' --- Implementations ---
+class StreamingPlatformImpl {
+    - publishableVideos: Array<PublishableVideo>
+    - podcasts: Array<Podcast>
+    - shows: Array<Show>
+    + StreamingPlatformImpl()
+    - findPublishableVideo(videoID: String): PublishableVideo
+    - findPodcastEpisode(videoID: String): PodcastEpisode
+    - findPodcast(title: String): Podcast
+    - findShow(title: String): Show
+    + << all methods from StreamingPlatform interface >>
+}
+
+abstract class AbstractVideoImpl {
+    - videoID: String
+    - title: String
+    - videoDuration: int
+    # AbstractVideoImpl(videoID: String, title: String, videoDuration: int)
+    + getVideoID(): String
+    + getTitle(): String
+    + getVideoDuration(): int
+}
+
+class PublishableVideoImpl {
+    - url: String
+    - publisher: String
+    - language: String
+    + PublishableVideoImpl(...)
+    + getUrl(): String
+    + getPublisher(): String
+    + getLanguageCode(): String
+}
+
+class PremiumVideoImpl {
+    - subtitles: Array<Subtitle>
+    + PremiumVideoImpl(...)
+    + addSubtitle(newSubtitle: Subtitle): void
+    + getSubtitles(): Iterator<Subtitle>
+}
+
+class PodcastEpisodeImpl {
+    - url: String
+    - date: String
+    + PodcastEpisodeImpl(...)
+    + getUrl(): String
+    + getDate(): String
+}
+
+class PodcastImpl {
+    - title: String
+    - author: String
+    - languageCode: String
+    - episodes: Array<PodcastEpisode>
+    + PodcastImpl(...)
+    + getTitle(): String
+    + getAuthor(): String
+    + getLanguageCode(): String
+    + addEpisode(episode: PodcastEpisode): void
+    + getEpisodes(): Iterator<PodcastEpisode>
+    + hasEpisodes(): boolean
+    + getLatestEpisode(): PodcastEpisode
+}
+
+class ShowImpl <<Record>> {
+    - author: String
+    - title: String
+    - videoID: String
+    - date: String
+    + ShowImpl(...)
+    + author(): String
+    + title(): String
+    + videoID(): String
+    + date(): String
+}
+
+class Subtitle <<Record>> {
+    - subtitleUrl: String
+    - subtitleLanguage: String
+    + Subtitle(subtitleUrl: String, subtitleLanguage: String)
+    + getSubtitleUrl(): String
+    + getSubtitleLanguage(): String
+}
+
+class Main {
+    + main(args: String[]): void
+    + runProgram(scanner: Scanner, platform: StreamingPlatform): void
+    - readCommonVideoFields(scanner: Scanner): String[]
+    - consumeLine(scanner: Scanner): void
+    - readTokenAndConsumeLine(scanner: Scanner): String
+    - readLine(scanner: Scanner): String
+    - createPublishableVideo(scanner: Scanner, platform: StreamingPlatform): void
+    - createPremiumVideo(scanner: Scanner, platform: StreamingPlatform): void
+    - createSubtitle(scanner: Scanner, platform: StreamingPlatform): void
+    - displayVideoData(scanner: Scanner, platform: StreamingPlatform): void
+    - displayVideoSubtitleList(scanner: Scanner, platform: StreamingPlatform): void
+    - deleteVideo(scanner: Scanner, platform: StreamingPlatform): void
+    - createPodcast(scanner: Scanner, platform: StreamingPlatform): void
+    - createPodcastEpisode(scanner: Scanner, platform: StreamingPlatform): void
+    - displayPodcastData(scanner: Scanner, platform: StreamingPlatform): void
+    - displayPodcastEpisodes(scanner: Scanner, platform: StreamingPlatform): void
+    - displayAuthorPodcastList(scanner: Scanner, platform: StreamingPlatform): void
+    - deletePodcast(scanner: Scanner, platform: StreamingPlatform): void
+    - createShow(scanner: Scanner, platform: StreamingPlatform): void
+    - displayShowData(scanner: Scanner, platform: StreamingPlatform): void
+    - deleteShow(scanner: Scanner, platform: StreamingPlatform): void
+}
+
+' --- Inheritance & Realization ---
+AbstractVideo <|-- PublishableVideo
+AbstractVideo <|-- PodcastEpisode
+PublishableVideo <|-- PremiumVideo
+
+StreamingPlatform <|.. StreamingPlatformImpl
+AbstractVideo <|.. AbstractVideoImpl
+
+AbstractVideoImpl <|-- PublishableVideoImpl
+AbstractVideoImpl <|-- PodcastEpisodeImpl
+
+PublishableVideo <|.. PublishableVideoImpl
+PublishableVideoImpl <|-- PremiumVideoImpl
+
+PremiumVideo <|.. PremiumVideoImpl
+PodcastEpisode <|.. PodcastEpisodeImpl
+Podcast <|.. PodcastImpl
+Show <|.. ShowImpl
+
+' --- Aggregations (Has-a Relationships) ---
+StreamingPlatformImpl o-- PublishableVideo
+StreamingPlatformImpl o-- Podcast
+StreamingPlatformImpl o-- Show
+
+PodcastImpl o-- PodcastEpisode
+PremiumVideoImpl o-- Subtitle
+
+' --- Dependencies ---
+Main --> StreamingPlatform : uses
+
+@enduml

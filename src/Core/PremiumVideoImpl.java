@@ -2,6 +2,7 @@ package Core;
 
 import dataStructures.Array;
 import dataStructures.ArrayClass;
+import dataStructures.Iterator;
 
 
 public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVideo{
@@ -24,7 +25,7 @@ public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVid
     }
 
     @Override
-    public Array<Subtitle> getSubtitles() {
-        return subtitles;
+    public Iterator<Subtitle> getSubtitles() {
+        return subtitles.iterator();
     }
 }
