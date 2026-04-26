@@ -20,41 +20,41 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     // --- Internal Helpers ---
 
     private PublishableVideo findPublishableVideo(String videoID) {
-        Iterator<PublishableVideo> it = publishableVideos.iterator();
-        while (it.hasNext()) {
-            PublishableVideo v = it.next();
-            if (v.getVideoID().equalsIgnoreCase(videoID)) return v;
+        Iterator<PublishableVideo> iterator = publishableVideos.iterator();
+        while (iterator.hasNext()) {
+            PublishableVideo video = iterator.next();
+            if (video.getVideoID().equalsIgnoreCase(videoID)) return video;
         }
         return null;
     }
 
     private PodcastEpisode findPodcastEpisode(String videoID) {
-        Iterator<Podcast> pIt = podcasts.iterator();
-        while (pIt.hasNext()) {
-            Podcast p = pIt.next();
-            Iterator<PodcastEpisode> epIt = p.getEpisodes();
-            while (epIt.hasNext()) {
-                PodcastEpisode ep = epIt.next();
-                if (ep.getVideoID().equalsIgnoreCase(videoID)) return ep;
+        Iterator<Podcast> podcastIterator = podcasts.iterator();
+        while (podcastIterator.hasNext()) {
+            Podcast podcast = podcastIterator.next();
+            Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
+            while (episodeIterator.hasNext()) {
+                PodcastEpisode episode = episodeIterator.next();
+                if (episode.getVideoID().equalsIgnoreCase(videoID)) return episode;
             }
         }
         return null;
     }
 
     private Podcast findPodcast(String title) {
-        Iterator<Podcast> it = podcasts.iterator();
-        while (it.hasNext()) {
-            Podcast p = it.next();
-            if (p.getTitle().equalsIgnoreCase(title)) return p;
+        Iterator<Podcast> iterator = podcasts.iterator();
+        while (iterator.hasNext()) {
+            Podcast podcast = iterator.next();
+            if (podcast.getTitle().equalsIgnoreCase(title)) return podcast;
         }
         return null;
     }
 
     private Show findShow(String title) {
-        Iterator<Show> it = shows.iterator();
-        while (it.hasNext()) {
-            Show s = it.next();
-            if (s.title().equalsIgnoreCase(title)) return s;
+        Iterator<Show> iterator = shows.iterator();
+        while (iterator.hasNext()) {
+            Show show = iterator.next();
+            if (show.title().equalsIgnoreCase(title)) return show;
         }
         return null;
     }

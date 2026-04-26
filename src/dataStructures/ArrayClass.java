@@ -43,10 +43,10 @@ public class ArrayClass<E> implements Array<E> {
 
 	@Override
 	public void insertLast(E e) {
-		if (counter == elems.length) {
+        if (counter == elems.length) {
             resize();
-            elems[counter++] = e;
         }
+        elems[counter++] = e;
 	}
 	
 	@Override
