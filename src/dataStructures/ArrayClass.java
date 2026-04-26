@@ -68,13 +68,13 @@ public class ArrayClass<E> implements Array<E> {
 		elems[--counter] = null;
 	}
 
-	@Override
-	public void removeAt(int pos) {
-		for (int i = pos; i< counter-1; i++) {
+    @Override
+    public void removeAt(int pos) {
+        for (int i = pos; i < counter - 1; i++) {
             elems[i] = elems[i + 1];
-            elems[--counter] = null;
         }
-	}
+        elems[--counter] = null;
+    }
 
 	@Override
 	public boolean searchForward(E e) {

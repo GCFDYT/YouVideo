@@ -10,7 +10,6 @@ import Core.Show;
 import java.util.Locale;
 import java.util.Scanner;
 
-
 /**
  * Main class for the You Video streaming platform application.
  * Provides a command-line interface for interacting with the streaming platform,
@@ -126,8 +125,8 @@ public class Main {
         fields[IDX_VIDEO_DURATION] = String.valueOf(scanner.nextInt());
         fields[IDX_URL] = scanner.next();
         consumeLine(scanner);
-        fields[IDX_PUBLISHER] = scanner.nextLine();
-        fields[IDX_TITLE] = scanner.nextLine();
+        fields[IDX_PUBLISHER] = readLine(scanner);
+        fields[IDX_TITLE] = readLine(scanner);
         fields[IDX_LANGUAGE_CODE] = scanner.next();
         consumeLine(scanner);
         return fields;
@@ -146,25 +145,14 @@ public class Main {
     }
 
     /**
-     * Reads a single token from the scanner and consumes the rest of the line.
-     *
-     * @param scanner the Scanner object for reading input
-     * @return the token read from the scanner
-     */
-    private static String readTokenAndConsumeLine(Scanner scanner) {
-        String token = scanner.next();
-        consumeLine(scanner);
-        return token;
-    }
-
-    /**
-     * Reads an entire line from the scanner.
+     * Reads an entire line from the scanner and removes trailing/leading spaces.
      *
      * @param scanner the Scanner object for reading input
      * @return the line read from the scanner
      */
     private static String readLine(Scanner scanner) {
-        return scanner.nextLine();
+        String line = scanner.nextLine();
+        return line != null ? line.trim() : "";
     }
 
     /**
@@ -196,9 +184,12 @@ public class Main {
                 case DELETE_SHOW -> deleteShow(scanner, platform);
                 case DISPLAY_CMD_LIST -> System.out.println(HELP_MSG);
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
-                default -> System.out.println(CMD_ERR);
+                default -> {
+                    System.out.println(CMD_ERR);
+                    consumeLine(scanner);
+                }
             }
-        } while (!EXIT_PROGRAM.equals(command));
+        } while (!EXIT_PROGRAM.equals(command.toLowerCase()));
     }
 
     /**
@@ -236,8 +227,9 @@ public class Main {
      */
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
-        String subtitleUrl = readTokenAndConsumeLine(scanner);
-        String subtitleLanguage = readTokenAndConsumeLine(scanner);
+        String subtitleUrl = scanner.next();
+        String subtitleLanguage = scanner.next();
+        consumeLine(scanner);
 
         String videoID = fields[IDX_VIDEO_ID];
         int duration = Integer.parseInt(fields[IDX_VIDEO_DURATION]);
@@ -265,9 +257,10 @@ public class Main {
      * @param platform the StreamingPlatform instance to operate on
      */
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
-        String videoID = readTokenAndConsumeLine(scanner);
-        String subtitleUrl = readTokenAndConsumeLine(scanner);
-        String subtitleLanguage = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
+        String subtitleUrl = scanner.next();
+        String subtitleLanguage = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.isValidLanguageCode(subtitleLanguage)) {
             System.out.println(INV_SUBTITLE);
@@ -289,7 +282,8 @@ public class Main {
      * @param platform the StreamingPlatform instance to operate on
      */
     private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
-        String videoID = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.hasPublishableVideo(videoID)) {
             System.out.printf(PUBLISHABLE_NOT_FOUND + "%n", videoID);
@@ -315,7 +309,8 @@ public class Main {
      * @param platform the StreamingPlatform instance to operate on
      */
     private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
-        String videoID = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.isPremiumVideo(videoID)) {
             System.out.println(NO_PREMIUM_VIDEO);
@@ -341,7 +336,8 @@ public class Main {
      * @param platform the StreamingPlatform instance to operate on
      */
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
-        String videoID = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.hasVideo(videoID)) {
             System.out.println(VIDEO_NOT_FOUND);
@@ -364,7 +360,8 @@ public class Main {
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String author = readLine(scanner);
-        String language = readTokenAndConsumeLine(scanner);
+        String language = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.isValidLanguageCode(language)) {
             System.out.println(INV_LANGUAGE);
@@ -385,10 +382,11 @@ public class Main {
      */
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
-        String videoID = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
         int duration = scanner.nextInt();
-        String url = readTokenAndConsumeLine(scanner);
-        String date = readTokenAndConsumeLine(scanner);
+        String url = scanner.next();
+        String date = scanner.next();
+        consumeLine(scanner);
         String episodeTitle = "Episode " + videoID;
 
         if (duration <= 0) {
@@ -505,8 +503,9 @@ public class Main {
      */
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
-        String videoID = readTokenAndConsumeLine(scanner);
-        String date = readTokenAndConsumeLine(scanner);
+        String videoID = scanner.next();
+        String date = scanner.next();
+        consumeLine(scanner);
 
         if (!platform.hasPublishableVideo(videoID)) {
             System.out.println(SHOW_NOT_FOUND);
