@@ -41,6 +41,33 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return result;
     }
 
+    private String getStandardizedName(String name) {
+        Iterator<PublishableVideo> itVid = publishableVideos.iterator();
+        while (itVid.hasNext()) {
+            PublishableVideo v = itVid.next();
+            if (v.getPublisher().equalsIgnoreCase(name)) {
+                return v.getPublisher();
+            }
+        }
+        Iterator<Podcast> itPod = podcasts.iterator();
+        while (itPod.hasNext()) {
+            Podcast p = itPod.next();
+            if (p.getAuthor().equalsIgnoreCase(name)) {
+                return p.getAuthor(); //
+            }
+        }
+        // 3. Check if they already exist as a Show Author
+        Iterator<Show> itShow = shows.iterator();
+        while (itShow.hasNext()) {
+            Show s = itShow.next();
+            if (s.author().equalsIgnoreCase(name)) {
+                return s.author();
+            }
+        }
+        // If no match is found anywhere, return the exact casing they just typed
+        return name;
+    }
+
     private Podcast findPodcast(String title) {
         Podcast result = null;
         Iterator<Podcast> iterator = podcasts.iterator();
@@ -100,17 +127,17 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean isPremiumVideo(String videoID) {
-        PublishableVideo v = findPublishableVideo(videoID);
-        return v instanceof PremiumVideo;
+        PublishableVideo video = findPublishableVideo(videoID);
+        return video instanceof PremiumVideo;
     }
 
     @Override
     public boolean hasPodcast(String title) {
         boolean found = false;
-        Iterator<Podcast> it = podcasts.iterator();
-        while (it.hasNext() && !found) {
-            Podcast p = it.next();
-            if (p.getTitle().equalsIgnoreCase(title)) {
+        Iterator<Podcast> iterator = podcasts.iterator();
+        while (iterator.hasNext() && !found) {
+            Podcast podcast = iterator.next();
+            if (podcast.getTitle().equalsIgnoreCase(title)) {
                 found = true;
             }
         }
@@ -139,10 +166,10 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public boolean isVideoUsedInShow(String videoID) {
         boolean found = false;
-        Iterator<Show> it = shows.iterator();
-        while (it.hasNext() && !found) {
-            Show s = it.next();
-            if (s.videoID().equalsIgnoreCase(videoID)) {
+        Iterator<Show> iterator = shows.iterator();
+        while (iterator.hasNext() && !found) {
+            Show show = iterator.next();
+            if (show.videoID().equalsIgnoreCase(videoID)) {
                 found = true;
             }
         }
@@ -152,9 +179,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public boolean isValidEpisodeDate(String podcastTitle, String date) {
         boolean valid = true;
-        Podcast p = findPodcast(podcastTitle);
-        if (p != null && p.hasEpisodes()) {
-            valid = date.compareTo(p.getLatestEpisode().getDate()) >= 0;
+        Podcast podcast = findPodcast(podcastTitle);
+        if (podcast != null && podcast.hasEpisodes()) {
+            valid = date.compareTo(podcast.getLatestEpisode().getDate()) >= 0;
         }
         return valid;
     }
@@ -162,10 +189,10 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public boolean hasAuthorPodcasts(String author) {
         boolean found = false;
-        Iterator<Podcast> it = podcasts.iterator();
-        while (it.hasNext() && !found) {
-            Podcast p = it.next();
-            if (p.getAuthor().equalsIgnoreCase(author)) {
+        Iterator<Podcast> iterator = podcasts.iterator();
+        while (iterator.hasNext() && !found) {
+            Podcast podcast = iterator.next();
+            if (podcast.getAuthor().equalsIgnoreCase(author)) {
                 found = true;
             }
         }
@@ -177,22 +204,24 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public void addPublishableVideo(String videoID, int videoDuration, String url,
                                     String publisher, String title, String languageCode) {
+        String finalPublisher = getStandardizedName(publisher);
         publishableVideos.insertLast(new PublishableVideoImpl(videoID,
-                videoDuration, url, publisher, title, languageCode));
+                videoDuration, url, finalPublisher, title, languageCode));
     }
 
     @Override
     public void addPremiumVideo(String videoID, int videoDuration, String url,
                                 String publisher, String title, String languageCode,
                                 String subtitleUrl, String subtitleLanguageCode) {
+        String finalPublisher = getStandardizedName(publisher);
         publishableVideos.insertLast(new PremiumVideoImpl(videoID, videoDuration, url,
-                publisher, title, languageCode, subtitleUrl, subtitleLanguageCode));
+                finalPublisher, title, languageCode, subtitleUrl, subtitleLanguageCode));
     }
 
     @Override
     public void addSubtitle(String videoID, String subtitleUrl, String subtitleLanguageCode) {
-        PremiumVideo pv = (PremiumVideo) findPublishableVideo(videoID);
-        pv.addSubtitle(new SubtitleImpl(subtitleUrl, subtitleLanguageCode));
+        PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideo(videoID);
+        premiumVideo.addSubtitle(new SubtitleImpl(subtitleUrl, subtitleLanguageCode));
     }
 
     @Override
@@ -206,7 +235,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void addPodcast(String title, String author, String languageCode) {
-        podcasts.insertLast(new PodcastImpl(title, author, languageCode));
+        String finalAuthor = getStandardizedName(author);
+        podcasts.insertLast(new PodcastImpl(title, finalAuthor, languageCode));
     }
 
     @Override
@@ -220,11 +250,11 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public void removePodcast(String title) {
         int index = -1;
-        Iterator<Podcast> it = podcasts.iterator();
+        Iterator<Podcast> iterator = podcasts.iterator();
         int i = 0;
-        while (it.hasNext() && index == -1) {
-            Podcast p = it.next();
-            if (p.getTitle().equalsIgnoreCase(title)) {
+        while (iterator.hasNext() && index == -1) {
+            Podcast podcast = iterator.next();
+            if (podcast.getTitle().equalsIgnoreCase(title)) {
                 index = i;
             }
             i++;
@@ -237,7 +267,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public void addShow(String author, String videoID, String date) {
         PublishableVideo v = findPublishableVideo(videoID);
-        shows.insertLast(new ShowImpl(author, v.getTitle(), videoID, date));
+        String finalAuthor = getStandardizedName(author);
+        shows.insertLast(new ShowImpl(finalAuthor, v.getTitle(), videoID, date));
     }
 
     @Override
@@ -283,14 +314,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public Iterator<Podcast> getAuthorPodcasts(String author) {
-        Array<Podcast> authorPods = new ArrayClass<>();
-        for (Iterator<Podcast> it = podcasts.iterator(); it.hasNext(); ) {
-            Podcast p = it.next();
-            if (p.getAuthor().equalsIgnoreCase(author)) {
-                authorPods.insertLast(p);
+        Array<Podcast> authorPodcasts = new ArrayClass<>();
+        for (Iterator<Podcast> iterator = podcasts.iterator(); iterator.hasNext(); ) {
+            Podcast podcast = iterator.next();
+            if (podcast.getAuthor().equalsIgnoreCase(author)) {
+                authorPodcasts.insertLast(podcast);
             }
         }
-        return authorPods.iterator();
+        return authorPodcasts.iterator();
     }
 
     @Override

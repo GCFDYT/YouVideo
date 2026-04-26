@@ -293,8 +293,9 @@ public class Main {
                 System.out.printf(VIDEO_DISPLAY, video.getVideoID(),
                         video.getVideoDuration(), video.getTitle());
             }
+            Locale locale = Locale.of(video.getLanguageCode());
             System.out.printf(VIDEO_FILE_INFO, video.getUrl(), video.getPublisher(),
-                    video.getLanguageCode().toUpperCase());
+                    locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase());
         }
     }
 
@@ -462,9 +463,10 @@ public class Main {
             System.out.println(NO_USER_PODCASTS);
         } else {
             System.out.printf(AUTHOR_PODCASTS_HEADER + "%n", author);
-            Iterator<Podcast> it = platform.getAuthorPodcasts(author);
-            while (it.hasNext()) {
-                Podcast podcast = it.next();
+
+            Iterator<Podcast> iterator = platform.getAuthorPodcasts(author);
+            while (iterator.hasNext()) {
+                Podcast podcast = iterator.next();
                 System.out.printf(PODCAST_ENTRY + "%n", podcast.getTitle(),
                         podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
             }

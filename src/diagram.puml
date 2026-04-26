@@ -1,5 +1,4 @@
 @startuml
-' We removed the "hide empty members" command so everything shows up now!
 
 ' --- Interfaces ---
 interface StreamingPlatform {
@@ -76,7 +75,7 @@ class StreamingPlatformImpl {
     - shows: Array<Show>
     + StreamingPlatformImpl()
     - findPublishableVideo(videoID: String): PublishableVideo
-    - findPodcastEpisode(videoID: String): PodcastEpisode
+    - getStandardizedName(name: String): String
     - findPodcast(title: String): Podcast
     - findShow(title: String): Show
     + << all methods from StreamingPlatform interface >>
