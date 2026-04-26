@@ -84,7 +84,7 @@ public class ArrayClass<E> implements Array<E> {
 	public boolean searchBackward(E e) {
 		int i = counter-1;
 		boolean found = false;
-		while (i>=0 && !found) {
+		while (i>= 0 && !found) {
             if (elems[i].equals(e)) {
                 found = true;
             } else {
