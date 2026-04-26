@@ -1,12 +1,20 @@
 package Core;
 
-public record Subtitle(String subtitleUrl, String subtitleLanguage) {
+/**
+ * Represents a subtitle file for premium videos.
+ * @author Gonçalo Domingos and João Domingues
+ */
+public interface Subtitle {
 
-    public String getSubtitleUrl() {
-        return subtitleUrl;
-    }
+    /**
+     * Returns the URL of the subtitle file.
+     * @return the subtitle URL
+     */
+    String getSubtitleUrl();
 
-    public String getSubtitleLanguage() {
-        return subtitleLanguage;
-    }
+    /**
+     * Returns the language code of the subtitle.
+     * @return the language code
+     */
+    String getSubtitleLanguage();
 }

@@ -5,6 +5,7 @@ package dataStructures;
  * @param <E> the type of elements stored in the array
  */
 public class ArrayClass<E> implements Array<E> {
+
 	/**
 	 * Constants for resizing and searching
 	 */

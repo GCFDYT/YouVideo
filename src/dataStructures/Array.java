@@ -16,7 +16,7 @@ public interface Array<E> {
     /**
      * Inserts an element at the specified position in the array.
      *
-     * @param e   the element to insert
+     * @param e the element to insert
      * @param pos the position at which to insert the element
      * @pre e != null && 0 <= pos && pos <= size()
      */

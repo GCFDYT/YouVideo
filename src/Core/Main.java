@@ -4,8 +4,15 @@ import dataStructures.Iterator;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * Main class for the You Video streaming platform application.
+ * Provides a command-line interface for interacting with the streaming platform,
+ * allowing users to manage videos, podcasts, and shows through text commands.
+ *
+ * @author Gonçalo Domingos and João Domingues
+ */
 public class Main {
-    // Command names:
+    // --- Command Names ---
     private static final String CREATE_PUBLISHABLE_VIDEO = "createpublishable";
     private static final String CREATE_PREMIUM_VIDEO = "createpremium";
     private static final String ADD_SUBTITLES_PREMIUM_VIDEO = "addsubtitle";
@@ -24,7 +31,7 @@ public class Main {
     private static final String DISPLAY_CMD_LIST = "help";
     private static final String EXIT_PROGRAM = "exit";
 
-    // Output messages:
+    // --- Output Messages ---
     private static final String CMD_ERR = "Unknown command. Type help to see available commands.";
     private static final String EXIT_MSG = "Bye!";
     private static final String VIDEO_CREATED = "Video %s created successfully.";
@@ -40,12 +47,14 @@ public class Main {
     private static final String VIDEO_NOT_FOUND = "Video does not exist.";
     private static final String NOT_PREMIUM = "This operation requires a Premium video.";
     private static final String NO_PREMIUM_VIDEO = "No Premium Video with ID.";
-    private static final String SUBTITLE_ADDED = "Subtitle added successfully.";
+    private static final String SUBTITLE_ADDED = "SubtitleImpl added successfully.";
     private static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     private static final String SUBTITLE_ENTRY = "- %s (%s)";
     private static final String VIDEO_REMOVED = "Video removed successfully.";
-    private static final String CANT_REMOVE_EPISODE = "Cannot remove: video is an episode of a podcast.";
-    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: video is used in a show.";
+    private static final String CANT_REMOVE_EPISODE = "Cannot remove: " +
+            "video is an episode of a podcast.";
+    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: " +
+            "video is used in a show.";
     private static final String PODCAST_CREATED = "Podcast created successfully.";
     private static final String PODCAST_EXISTS = "Podcast with this title already exists.";
     private static final String PODCAST_NOT_FOUND = "Podcast does not exist.";
@@ -54,7 +63,8 @@ public class Main {
     private static final String PODCAST_REMOVED = "Podcast removed successfully.";
     private static final String EPISODE_ADDED = "Episode added successfully.";
     private static final String EPISODE_ID_EXISTS = "Episode ID already exists in the system.";
-    private static final String INV_EPISODE_DATE = "Episode date must be >= than latest episode date.";
+    private static final String INV_EPISODE_DATE = "Episode date must be >= " +
+            "than latest episode date.";
     private static final String EPISODES_HEADER = "Episodes for podcast %s:";
     private static final String EPISODE_ENTRY = "Episode %s: %d min Date: %s";
     private static final String EPISODE_URL = "URL: %s";
@@ -69,7 +79,6 @@ public class Main {
     private static final String SHOW_VIDEO = "Video: %s";
     private static final String SHOW_FALSE = "Show does not exist.";
     private static final String SHOW_REMOVED = "Show removed successfully.";
-
     private static final String HELP_MSG =
             CREATE_PUBLISHABLE_VIDEO + " - creates a new publishable video\n" +
                     CREATE_PREMIUM_VIDEO + " - creates a new publishable Premium video\n" +
@@ -89,6 +98,7 @@ public class Main {
                     DISPLAY_CMD_LIST + " - shows the available commands\n" +
                     EXIT_PROGRAM + " - terminates the execution of the program";
 
+    // --- Field Indexes for Common Video Fields ---
     private static final int IDX_VIDEO_ID = 0;
     private static final int IDX_VIDEO_DURATION = 1;
     private static final int IDX_URL = 2;
@@ -97,6 +107,12 @@ public class Main {
     private static final int IDX_LANGUAGE_CODE = 5;
     private static final int NUM_FIELDS = 6;
 
+    /**
+     * Reads the common fields for video creation (ID, duration, URL, publisher, title, language).
+     *
+     * @param scanner the Scanner object for reading input
+     * @return a String array containing the six common video fields
+     */
     private static String[] readCommonVideoFields(Scanner scanner) {
         String[] fields = new String[NUM_FIELDS];
         fields[IDX_VIDEO_ID] = scanner.next();
@@ -110,22 +126,47 @@ public class Main {
         return fields;
     }
 
+    /**
+     * Consumes the remaining line in the scanner input.
+     * Used to clear the buffer after reading tokens.
+     *
+     * @param scanner the Scanner object for reading input
+     */
     private static void consumeLine(Scanner scanner) {
         if (scanner.hasNextLine()) {
             scanner.nextLine();
         }
     }
 
+    /**
+     * Reads a single token from the scanner and consumes the rest of the line.
+     *
+     * @param scanner the Scanner object for reading input
+     * @return the token read from the scanner
+     */
     private static String readTokenAndConsumeLine(Scanner scanner) {
         String token = scanner.next();
         consumeLine(scanner);
         return token;
     }
 
+    /**
+     * Reads an entire line from the scanner.
+     *
+     * @param scanner the Scanner object for reading input
+     * @return the line read from the scanner
+     */
     private static String readLine(Scanner scanner) {
         return scanner.nextLine();
     }
 
+    /**
+     * Main program loop that processes user commands until exit.
+     * Reads commands from the scanner and delegates to the appropriate handler methods.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     public static void runProgram(Scanner scanner, StreamingPlatform platform) {
         String command;
         do {
@@ -153,6 +194,13 @@ public class Main {
         } while (!EXIT_PROGRAM.equals(command));
     }
 
+    /**
+     * Handles the creation of a new publishable video.
+     * Reads video data from input, validates it, and adds it to the platform.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
         String videoID = fields[IDX_VIDEO_ID];
@@ -172,6 +220,13 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the creation of a new premium video with subtitles.
+     * Reads video data and subtitle information from input, validates it, and adds it to the platform.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
@@ -196,6 +251,12 @@ public class Main {
         }
     }
 
+    /**
+     * Handles adding a subtitle to an existing premium video.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
         String videoID = readTokenAndConsumeLine(scanner);
         String subtitleUrl = readTokenAndConsumeLine(scanner);
@@ -213,6 +274,13 @@ public class Main {
         }
     }
 
+    /**
+     * Displays detailed information about a publishable video.
+     * Shows different formatting for premium vs standard videos.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
         String videoID = readTokenAndConsumeLine(scanner);
 
@@ -233,6 +301,12 @@ public class Main {
         }
     }
 
+    /**
+     * Displays all subtitles associated with a premium video.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
         String videoID = readTokenAndConsumeLine(scanner);
 
@@ -242,16 +316,23 @@ public class Main {
             PublishableVideo video = platform.getVideo(videoID);
             System.out.printf(SUBTITLES_HEADER + "%n", video.getTitle());
 
-            Iterator<Subtitle> it = platform.getSubtitles(videoID);
+            Iterator<SubtitleImpl> it = platform.getSubtitles(videoID);
             while (it.hasNext()) {
-                Subtitle subtitle = it.next();
-                Locale locale = Locale.of(subtitle.getSubtitleLanguage());
-                System.out.printf(SUBTITLE_ENTRY + "%n", subtitle.getSubtitleUrl(),
+                SubtitleImpl subtitleImpl = it.next();
+                Locale locale = Locale.of(subtitleImpl.getSubtitleLanguage());
+                System.out.printf(SUBTITLE_ENTRY + "%n", subtitleImpl.getSubtitleUrl(),
                         locale.getDisplayLanguage().toUpperCase());
             }
         }
     }
 
+    /**
+     * Handles the removal of a video from the platform.
+     * Checks for constraints (video used in podcast or show) before removal.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
         String videoID = readTokenAndConsumeLine(scanner);
 
@@ -267,6 +348,12 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the creation of a new podcast.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String author = readLine(scanner);
@@ -282,12 +369,20 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the addition of a new episode to an existing podcast.
+     * Validates episode date against the podcast's latest episode.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String videoID = readTokenAndConsumeLine(scanner);
         int duration = scanner.nextInt();
         String url = readTokenAndConsumeLine(scanner);
         String date = readTokenAndConsumeLine(scanner);
+        String episodeTitle = "Episode " + videoID;
 
         if (duration <= 0) {
             System.out.println(INV_VALUE);
@@ -298,11 +393,17 @@ public class Main {
         } else if (!platform.isValidEpisodeDate(title, date)) {
             System.out.println(INV_EPISODE_DATE);
         } else {
-            platform.addPodcastEpisode(title, videoID, duration, url, date);
+            platform.addPodcastEpisode(title, videoID, duration, url, date, episodeTitle); // ← passar
             System.out.println(EPISODE_ADDED);
         }
     }
 
+    /**
+     * Displays information about a podcast including its latest episode date.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayPodcastData(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -321,6 +422,12 @@ public class Main {
         }
     }
 
+    /**
+     * Displays all episodes of a podcast with their details.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -343,6 +450,12 @@ public class Main {
         }
     }
 
+    /**
+     * Displays all podcasts created by a specific author.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
 
@@ -360,6 +473,12 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the removal of a podcast from the platform.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -371,6 +490,12 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the creation of a new show using an existing video.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
         String videoID = readTokenAndConsumeLine(scanner);
@@ -389,6 +514,12 @@ public class Main {
         }
     }
 
+    /**
+     * Displays information about a show.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void displayShowData(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -401,6 +532,12 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the removal of a show from the platform.
+     *
+     * @param scanner the Scanner object for reading input
+     * @param platform the StreamingPlatform instance to operate on
+     */
     private static void deleteShow(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -412,6 +549,12 @@ public class Main {
         }
     }
 
+    /**
+     * The main entry point of the application.
+     * Sets up the locale, creates the platform instance, and starts the program loop.
+     *
+     * @param args command line arguments (not used)
+     */
     public static void main(String[] args) {
         Locale.setDefault(Locale.of("EN", "GB"));
         StreamingPlatform platform = new StreamingPlatformImpl();

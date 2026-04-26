@@ -10,13 +10,15 @@ public interface PremiumVideo extends PublishableVideo {
 
     /**
      * Adds a new subtitle to the premium video.
-     * @param newSubtitle - the subtitle object to be added.
+     * @param newSubtitleImpl - the subtitle object to be added.
+     * @pre newSubtitleImpl != null
+     * @pre isValidLanguageCode(newSubtitleImpl.getSubtitleLanguage())
      */
-    void addSubtitle(Subtitle newSubtitle);
+    void addSubtitle(SubtitleImpl newSubtitleImpl);
 
     /**
      * Returns an iterator over the subtitles of the video.
      * @return returns an <code>Iterator</code> of subtitles.
      */
-    Iterator<Subtitle> getSubtitles();
+    Iterator<SubtitleImpl> getSubtitles();
 }

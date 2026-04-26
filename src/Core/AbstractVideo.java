@@ -19,8 +19,9 @@ public interface AbstractVideo {
     String getTitle();
 
     /**
-     * Returns the duration of the video.
+     * Returns the duration of the video in minutes.
      * @return returns the <code>videoDuration</code> in minutes.
+     * @pre videoDuration > 0
      */
     int getVideoDuration();
 }

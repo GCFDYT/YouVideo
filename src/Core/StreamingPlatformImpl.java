@@ -5,17 +5,29 @@ import dataStructures.ArrayClass;
 import dataStructures.Iterator;
 import java.util.Locale;
 
+/**
+ * Implementation of the StreamingPlatform interface.
+ * Manages collections of publishable videos, podcasts, and shows.
+ *
+ * @author Gonçalo Domingos and João Domingues
+ */
 public class StreamingPlatformImpl implements StreamingPlatform {
 
     private final Array<PublishableVideo> publishableVideos;
     private final Array<Podcast> podcasts;
     private final Array<Show> shows;
 
+    /**
+     * Constructs a new StreamingPlatformImpl with pre-allocated storage.
+     * Initial capacity for each internal array is set to 50 elements.
+     */
     public StreamingPlatformImpl() {
         publishableVideos = new ArrayClass<>(50);
         podcasts = new ArrayClass<>(50);
         shows = new ArrayClass<>(50);
     }
+
+    // --- Internal Helpers ---
 
     private PublishableVideo findPublishableVideo(String videoID) {
         PublishableVideo result = null;
@@ -53,6 +65,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         return result;
     }
 
+    // --- Pre-condition Checks ---
+
     @Override
     public boolean hasVideo(String videoID) {
         boolean hasPublishable = hasPublishableVideo(videoID);
@@ -62,15 +76,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPublishableVideo(String videoID) {
-        boolean found = false;
-        Iterator<PublishableVideo> iterator = publishableVideos.iterator();
-        while (iterator.hasNext() && !found) {
-            PublishableVideo video = iterator.next();
-            if (video.getVideoID().equalsIgnoreCase(videoID)) {
-                found = true;
-            }
-        }
-        return found;
+        PublishableVideo searchKey = new PublishableVideoImpl(videoID, 0, "", "", "", "");
+        return publishableVideos.searchForward(searchKey);
     }
 
     @Override
@@ -98,28 +105,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcast(String title) {
-        boolean found = false;
-        Iterator<Podcast> iterator = podcasts.iterator();
-        while (iterator.hasNext() && !found) {
-            Podcast podcast = iterator.next();
-            if (podcast.getTitle().equalsIgnoreCase(title)) {
-                found = true;
-            }
-        }
-        return found;
+        Podcast searchKey = new PodcastImpl(title, "", "");
+        return podcasts.searchForward(searchKey);
     }
 
     @Override
     public boolean hasShow(String title) {
-        boolean found = false;
-        Iterator<Show> iterator = shows.iterator();
-        while (iterator.hasNext() && !found) {
-            Show show = iterator.next();
-            if (show.title().equalsIgnoreCase(title)) {
-                found = true;
-            }
-        }
-        return found;
+        Show searchKey = new ShowImpl("", title, "", "");
+        return shows.searchForward(searchKey);
     }
 
     @Override
@@ -175,31 +168,32 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     // --- Commands ---
 
     @Override
-    public void addPublishableVideo(String videoID, int videoDuration, String url, String publisher, String title, String languageCode) {
-        publishableVideos.insertLast(new PublishableVideoImpl(videoID, videoDuration, url, publisher, title, languageCode));
+    public void addPublishableVideo(String videoID, int videoDuration, String url,
+                                    String publisher, String title, String languageCode) {
+        publishableVideos.insertLast(new PublishableVideoImpl(videoID,
+                videoDuration, url, publisher, title, languageCode));
     }
 
     @Override
-    public void addPremiumVideo(String videoID, int videoDuration, String url, String publisher, String title, String languageCode, String subtitleUrl, String subtitleLanguageCode) {
-        publishableVideos.insertLast(new PremiumVideoImpl(videoID, videoDuration, url, publisher, title, languageCode, subtitleUrl, subtitleLanguageCode));
+    public void addPremiumVideo(String videoID, int videoDuration, String url,
+                                String publisher, String title, String languageCode,
+                                String subtitleUrl, String subtitleLanguageCode) {
+        publishableVideos.insertLast(new PremiumVideoImpl(videoID, videoDuration, url,
+                publisher, title, languageCode, subtitleUrl, subtitleLanguageCode));
     }
 
     @Override
     public void addSubtitle(String videoID, String subtitleUrl, String subtitleLanguageCode) {
         PremiumVideo pv = (PremiumVideo) findPublishableVideo(videoID);
-        pv.addSubtitle(new Subtitle(subtitleUrl, subtitleLanguageCode));
+        pv.addSubtitle(new SubtitleImpl(subtitleUrl, subtitleLanguageCode));
     }
 
     @Override
     public void removeVideo(String videoID) {
-        boolean removed = false;
-        int i = 0;
-        while (i < publishableVideos.size() && !removed) {
-            if (publishableVideos.get(i).getVideoID().equalsIgnoreCase(videoID)) {
-                publishableVideos.removeAt(i);
-                removed = true;
-            }
-            i++;
+        PublishableVideo searchKey = new PublishableVideoImpl(videoID, 0, "", "", "", "");
+        int index = publishableVideos.searchIndexOf(searchKey);
+        if (index != -1) {
+            publishableVideos.removeAt(index);
         }
     }
 
@@ -209,21 +203,19 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public void addPodcastEpisode(String title, String videoID, int videoDuration, String episodeUrl, String date) {
+    public void addPodcastEpisode(String title, String videoID, int videoDuration,
+                                  String episodeUrl, String date, String episodeTitle) {
         Podcast podcast = findPodcast(title);
-        podcast.addEpisode(new PodcastEpisodeImpl(videoID, videoDuration, "Episode " + videoID, episodeUrl, date));
+        podcast.addEpisode(new PodcastEpisodeImpl(videoID, videoDuration, episodeTitle,
+                episodeUrl, date));
     }
 
     @Override
     public void removePodcast(String title) {
-        boolean removed = false;
-        int i = 0;
-        while (i < podcasts.size() && !removed) {
-            if (podcasts.get(i).getTitle().equalsIgnoreCase(title)) {
-                podcasts.removeAt(i);
-                removed = true;
-            }
-            i++;
+        Podcast searchKey = new PodcastImpl(title, "", "");
+        int index = podcasts.searchIndexOf(searchKey);
+        if (index != -1) {
+            podcasts.removeAt(index);
         }
     }
 
@@ -235,14 +227,10 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeShow(String title) {
-        boolean removed = false;
-        int i = 0;
-        while (i < shows.size() && !removed) {
-            if (shows.get(i).title().equalsIgnoreCase(title)) {
-                shows.removeAt(i);
-                removed = true;
-            }
-            i++;
+        Show searchKey = new ShowImpl("", title, "", "");
+        int index = shows.searchIndexOf(searchKey);
+        if (index != -1) {
+            shows.removeAt(index);
         }
     }
 
@@ -254,7 +242,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Iterator<Subtitle> getSubtitles(String videoID) {
+    public Iterator<SubtitleImpl> getSubtitles(String videoID) {
         PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideo(videoID);
         return premiumVideo.getSubtitles();
     }

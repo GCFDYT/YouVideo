@@ -23,7 +23,7 @@ public class ArrayIteratorClass<E> implements Iterator<E> {
 
     /**
      * Constructs an ArrayIterator with the given array of elements and the counter.
-     * @param elems   the array of elements to iterate over
+     * @param elems the array of elements to iterate over
      * @param counter the number of elements in the array
      */
     public ArrayIteratorClass(E[] elems, int counter) {

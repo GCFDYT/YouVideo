@@ -4,6 +4,13 @@ import dataStructures.Array;
 import dataStructures.ArrayClass;
 import dataStructures.Iterator;
 
+/**
+ * Implementation of a podcast, containing a collection of episodes.
+ * Episodes are stored in reverse chronological order (newest first) to optimize
+ * access to the latest episode without requiring sorting operations.
+ *
+ * @author Gonçalo Domingos and João Domingues
+ */
 public class PodcastImpl implements Podcast {
 
     private final String title;
@@ -11,6 +18,13 @@ public class PodcastImpl implements Podcast {
     private final String languageCode;
     private final Array<PodcastEpisode> episodes;
 
+    /**
+     * Constructs a new podcast with the specified properties and no episodes.
+     *
+     * @param title the unique title of the podcast
+     * @param author the author of the podcast
+     * @param languageCode the language code of the podcast
+     */
     public PodcastImpl(String title, String author, String languageCode) {
         this.title = title;
         this.author = author;
@@ -19,20 +33,22 @@ public class PodcastImpl implements Podcast {
     }
 
     @Override
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
     @Override
-    public String getAuthor() { return author; }
+    public String getAuthor() {
+        return author;
+    }
 
     @Override
-    public String getLanguageCode() { return languageCode; }
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
     @Override
     public void addEpisode(PodcastEpisode episode) {
-        /* * Platform rules guarantee new episodes are >= the latest episode date.
-         * By inserting at index 0, we naturally maintain the required reverse chronological order
-         * without needing a sorting algorithm.
-         */
         episodes.insertAt(episode, 0);
     }
 
@@ -50,7 +66,25 @@ public class PodcastImpl implements Podcast {
     public PodcastEpisode getLatestEpisode() {
         if (hasEpisodes()) {
             return episodes.get(0);
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        } else {
+            PodcastImpl that = (PodcastImpl) obj;
+            return title.equalsIgnoreCase(that.title);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return title.toLowerCase().hashCode();
     }
 }

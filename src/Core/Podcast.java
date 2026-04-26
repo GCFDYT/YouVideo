@@ -28,8 +28,8 @@ public interface Podcast {
 
     /**
      * Adds a new episode to the podcast collection.
+     * @param episode the episode object to be added.
      * @pre episode != null
-     * @param episode - the episode object to be added.
      */
     void addEpisode(PodcastEpisode episode);
 
@@ -47,8 +47,8 @@ public interface Podcast {
 
     /**
      * Returns the most recent episode added to the podcast.
-     * @pre hasEpisodes()
      * @return returns the latest <code>PodcastEpisode</code> object.
+     * @pre hasEpisodes() == true
      */
     PodcastEpisode getLatestEpisode();
 }

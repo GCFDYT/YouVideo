@@ -8,7 +8,7 @@ import dataStructures.Iterator;
  */
 public interface StreamingPlatform {
 
-    // --- Pre-conditions & Verifications ---
+    // --- Pre-condition Checks ---
 
     /**
      * Checks if a video (Publishable or Episode) with <code>videoID</code> exists in the system.
@@ -82,7 +82,6 @@ public interface StreamingPlatform {
      */
     boolean hasAuthorPodcasts(String author);
 
-
     // --- Commands ---
 
     /**
@@ -147,9 +146,10 @@ public interface StreamingPlatform {
      * @param videoDuration - the duration of the episode in minutes.
      * @param episodeUrl - the file URL of the episode.
      * @param date - the release date of the episode.
+     * @param episodeTitle - the title of the episode.
      */
     void addPodcastEpisode(String title, String videoID, int videoDuration,
-                           String episodeUrl, String date);
+                           String episodeUrl, String date, String episodeTitle);
 
     /**
      * Removes a podcast and all its associated episodes from the system.
@@ -174,7 +174,6 @@ public interface StreamingPlatform {
      */
     void removeShow(String title);
 
-
     // --- Queries ---
 
     /**
@@ -191,7 +190,7 @@ public interface StreamingPlatform {
      * @param videoID - the unique identifier of the premium video.
      * @return returns an <code>Iterator</code> of subtitles.
      */
-    Iterator<Subtitle> getSubtitles(String videoID);
+    Iterator<SubtitleImpl> getSubtitles(String videoID);
 
     /**
      * Returns a podcast.
