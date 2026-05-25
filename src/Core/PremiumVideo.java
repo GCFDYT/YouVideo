@@ -1,7 +1,5 @@
 package Core;
 
-import dataStructures.Iterator;
-
 /**
  * Represents a premium publishable video that includes subtitle support.
  * @author Gonçalo Domingos and João Domingues
@@ -18,7 +16,8 @@ public interface PremiumVideo extends PublishableVideo {
 
     /**
      * Returns an iterator over the subtitles of the video.
+     *
      * @return returns an <code>Iterator</code> of subtitles.
      */
-    Iterator<SubtitleImpl> getSubtitles();
+    java.util.Iterator<SubtitleImpl> getSubtitles();
 }

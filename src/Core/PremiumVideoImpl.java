@@ -1,8 +1,7 @@
 package Core;
 
-import dataStructures.Array;
-import dataStructures.ArrayClass;
-import dataStructures.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of a premium video, extending PublishableVideoImpl.
@@ -14,7 +13,7 @@ import dataStructures.Iterator;
  */
 public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVideo {
 
-    private final Array<SubtitleImpl> subtitles;
+    private final List<SubtitleImpl> subtitles;
 
     /**
      * Constructs a new premium video with the specified properties and an initial subtitle.
@@ -33,18 +32,18 @@ public class PremiumVideoImpl extends PublishableVideoImpl implements PremiumVid
                             String subtitleLanguageCode) {
 
         super(videoID, videoDuration, url, publisher, title, language);
-        subtitles = new ArrayClass<>();
+        subtitles = new ArrayList<>();
         SubtitleImpl subtitleImpl = new SubtitleImpl(subtitleUrl, subtitleLanguageCode);
-        subtitles.insertLast(subtitleImpl);
+        subtitles.add(subtitleImpl);
     }
 
     @Override
     public void addSubtitle(SubtitleImpl newSubtitleImpl) {
-        subtitles.insertLast(newSubtitleImpl);
+        subtitles.add(newSubtitleImpl);
     }
 
     @Override
-    public Iterator<SubtitleImpl> getSubtitles() {
+    public java.util.Iterator<SubtitleImpl> getSubtitles() {
         return subtitles.iterator();
     }
 }

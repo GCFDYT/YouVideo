@@ -1,4 +1,4 @@
-import dataStructures.Iterator;
+import java.util.Iterator;
 import Core.StreamingPlatform;
 import Core.StreamingPlatformImpl;
 import Core.PublishableVideo;
