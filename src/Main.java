@@ -1,12 +1,12 @@
-import dataStructures.Iterator;
-import Core.StreamingPlatform;
-import Core.StreamingPlatformImpl;
-import Core.PublishableVideo;
-import Core.PremiumVideo;
-import Core.SubtitleImpl;
 import Core.Podcast;
 import Core.PodcastEpisode;
+import Core.PremiumVideo;
+import Core.PublishableVideo;
 import Core.Show;
+import Core.StreamingPlatform;
+import Core.StreamingPlatformImpl;
+import Core.SubtitleImpl;
+import dataStructures.Iterator;
 import java.util.Locale;
 import java.util.Scanner;
 
