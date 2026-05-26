@@ -13,6 +13,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private final Map<String, Show> shows;
     private final Map<String, Author> authorsMap;
 
+    /**
+     * Initializes the streaming platform with empty collections for videos, podcasts, shows, and authors.
+     */
     public StreamingPlatformImpl() {
         publishableVideos = new HashMap<>();
         podcasts = new HashMap<>();
@@ -20,20 +23,38 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         authorsMap = new HashMap<>();
     }
 
-    // --- Internal Helpers ---
-
+    /**
+     * Retrieves a publishable video from the internal map using a case-insensitive ID search.
+     * @param videoID - the ID of the video to find.
+     * @return returns the PublishableVideo object, or null if not found.
+     */
     private PublishableVideo findPublishableVideo(String videoID) {
         return publishableVideos.get(videoID.toLowerCase());
     }
 
+    /**
+     * Retrieves a podcast from the internal map using a case-insensitive title search.
+     * @param title - the title of the podcast to find.
+     * @return returns the Podcast object, or null if not found.
+     */
     private Podcast findPodcast(String title) {
         return podcasts.get(title.toLowerCase());
     }
 
+    /**
+     * Retrieves a show from the internal map using a case-insensitive title search.
+     * @param title - the title of the show to find.
+     * @return returns the Show object, or null if not found.
+     */
     private Show findShow(String title) {
         return shows.get(title.toLowerCase());
     }
 
+    /**
+     * Retrieves an existing author or creates and registers a new one if they do not currently exist.
+     * @param name - the name of the author.
+     * @return returns the Author object associated with the given name.
+     */
     private Author getOrCreateAuthor(String name) {
         String key = name.toLowerCase();
         if (!authorsMap.containsKey(key)) {
@@ -41,8 +62,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         }
         return authorsMap.get(key);
     }
-
-    // --- Pre-condition Checks ---
 
     @Override
     public boolean hasVideo(String videoID) {
@@ -56,6 +75,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcastEpisode(String videoID) {
+        // Iterate through all podcasts and their respective episodes to find a matching video ID
         for (Podcast podcast : podcasts.values()) {
             Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
             while (episodeIterator.hasNext()) {
@@ -101,6 +121,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public boolean isValidEpisodeDate(String podcastTitle, String date) {
         Podcast podcast = findPodcast(podcastTitle);
+        // Ensure the new episode's date is chronologically on or after the most recently added episode
         if (podcast != null && podcast.hasEpisodes()) {
             return date.compareTo(podcast.getLatestEpisode().getDate()) >= 0;
         }
@@ -125,12 +146,12 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public boolean isTitleTaggedWith(String title, String tag) {
         Podcast p = findPodcast(title);
         Show s = findShow(title);
+        
+        // A title might be a Podcast or a Show, so we check both collections and verify if the tag exists
         boolean pTagged = (p != null && ((TaggableContent) p).hasTag(tag));
         boolean sTagged = (s != null && ((TaggableContent) s).hasTag(tag));
         return pTagged || sTagged;
     }
-
-    // --- Commands ---
 
     @Override
     public void addPublishableVideo(String videoID, int videoDuration, String url,
@@ -179,6 +200,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         Podcast p = findPodcast(title);
         if (p != null) {
             Author author = authorsMap.get(((TaggableContent) p).getAuthor().toLowerCase());
+            // Safely remove the content from the author's specific contribution list before deleting it globally
             if (author != null) author.removePodcast(p); 
             podcasts.remove(title.toLowerCase());
         }
@@ -198,6 +220,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         Show s = findShow(title);
         if (s != null) {
             Author author = authorsMap.get(((TaggableContent) s).getAuthor().toLowerCase());
+            // Safely remove the content from the author's specific contribution list before deleting it globally
             if (author != null) author.removeShow(s); 
             shows.remove(title.toLowerCase());
         }
@@ -205,6 +228,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void addTagToTitle(String title, String tag) {
+        // Apply the tag operation to whichever content type (Podcast or Show) matches the title
         Podcast p = findPodcast(title);
         if (p != null) ((TaggableContent) p).addTag(tag);
         
@@ -220,8 +244,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         Show s = findShow(title);
         if (s != null) ((TaggableContent) s).removeTag(tag);
     }
-
-    // --- Queries ---
 
     @Override
     public PublishableVideo getVideo(String videoID) {
@@ -265,6 +287,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             }
         }
         
+        // Sort primarily by productivity count (descending), using alphabetical author names as a tie-breaker
         productiveAuthors.sort(Comparator
                 .comparingInt(Author::getProductivity).reversed()
                 .thenComparing(Author::getName, String.CASE_INSENSITIVE_ORDER)
@@ -277,6 +300,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public Iterator<TaggableContent> getTaggedContent(String tag, String filter, String order) {
         List<TaggableContent> result = new ArrayList<>();
         
+        // Populate the result list based on the requested filter type (ALL, SHOW, or PODCAST)
         if (filter.equals("ALL") || filter.equals("SHOW")) {
             for (Show s : shows.values()) {
                 if (((TaggableContent) s).hasTag(tag)) {
@@ -293,13 +317,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             }
         }
         
+        // Custom sort mapping the ASC/DES parameter to title alphabetization and handling type tie-breakers
         result.sort((c1, c2) -> {
             int titleCompare = c1.getTitle().compareToIgnoreCase(c2.getTitle());
-            if (order.equals("DES")) titleCompare *= -1; // Reverse for Descending
+            if (order.equals("DES")) titleCompare *= -1; // Reverse for Descending order
             
             if (titleCompare != 0) return titleCompare;
             
-            // Tie-breaker: Shows come before Podcasts
+            // If titles are identical, prioritize Shows over Podcasts as the final tie-breaker
             if (c1 instanceof Show && c2 instanceof Podcast) return -1;
             if (c1 instanceof Podcast && c2 instanceof Show) return 1;
             return 0;
