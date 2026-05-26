@@ -10,7 +10,6 @@ public class ShowImpl extends AbstractTaggableContent implements Show {
     private final String date;
 
     public ShowImpl(String author, String title, String videoID, String date) {
-        // Pass the shared attributes up to the abstract class
         super(title, author);
         this.videoID = videoID;
         this.date = date;

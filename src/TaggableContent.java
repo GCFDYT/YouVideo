@@ -8,8 +8,8 @@ public interface TaggableContent {
     String getTitle();
     String getAuthor();
     
-    boolean addTag(String tag);
-    boolean removeTag(String tag);
+    void addTag(String tag);
+    void removeTag(String tag);
     boolean hasTag(String tag);
     boolean hasTags();
     Iterator<String> getTags();

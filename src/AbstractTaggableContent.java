@@ -15,7 +15,6 @@ public abstract class AbstractTaggableContent implements TaggableContent {
     public AbstractTaggableContent(String title, String author) {
         this.title = title;
         this.author = author;
-        // TreeSet automatically keeps tags unique and in alphabetical order!
         this.tags = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     }
 
@@ -30,13 +29,13 @@ public abstract class AbstractTaggableContent implements TaggableContent {
     }
 
     @Override
-    public boolean addTag(String tag) {
-        return tags.add(tag); // Returns false if the tag already exists
+    public void addTag(String tag) {
+        tags.add(tag);
     }
 
     @Override
-    public boolean removeTag(String tag) {
-        return tags.remove(tag); // Returns false if the tag didn't exist
+    public void removeTag(String tag) {
+        tags.remove(tag);
     }
 
     @Override

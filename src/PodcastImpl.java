@@ -5,16 +5,15 @@ import java.util.List;
 /**
  * Implementation of a podcast, containing a collection of episodes.
  * @author Gonçalo Domingos and João Domingues
- * 
-**/
+ *
+ **/
 public class PodcastImpl extends AbstractTaggableContent implements Podcast {
 
     private final String languageCode;
     private final List<PodcastEpisode> episodes;
 
     public PodcastImpl(String title, String author, String languageCode) {
-        // Pass the shared attributes up to the abstract class
-        super(title, author); 
+        super(title, author);
         this.languageCode = languageCode;
         this.episodes = new LinkedList<>();
     }
@@ -41,18 +40,20 @@ public class PodcastImpl extends AbstractTaggableContent implements Podcast {
 
     @Override
     public PodcastEpisode getLatestEpisode() {
+        PodcastEpisode latest = null;
         if (hasEpisodes()) {
-            return episodes.iterator().next();
+            latest = episodes.getFirst();
         }
-        return null;
+        return latest;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PodcastImpl that)) {
-            return false;
+        boolean isEqual = false;
+        if (obj instanceof PodcastImpl that) {
+            isEqual = this.getTitle().equalsIgnoreCase(that.getTitle());
         }
-        return this.getTitle().equalsIgnoreCase(that.getTitle());
+        return isEqual;
     }
 
     @Override

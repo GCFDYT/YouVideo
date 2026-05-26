@@ -42,13 +42,15 @@ public class PublishableVideoImpl extends AbstractVideo implements PublishableVi
 
     @Override
     public boolean equals(Object obj) {
+        boolean isEqual = false;
+
         if (this == obj) {
-            return true;
-        } else if (!(obj instanceof PublishableVideoImpl that)) {
-            return false;
-        } else {
-            return getVideoID().equalsIgnoreCase(that.getVideoID());
+            isEqual = true;
+        } else if (obj instanceof PublishableVideoImpl that) {
+            isEqual = getVideoID().equalsIgnoreCase(that.getVideoID());
         }
+
+        return isEqual;
     }
 
     @Override

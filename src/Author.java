@@ -33,27 +33,9 @@ public class Author {
         podcasts.add(podcast);
     }
 
-    public Iterator<Show> getShows() {
-        return shows.iterator();
-    }
-
     public Iterator<Podcast> getPodcasts() {
         return podcasts.iterator();
     }
-
-    public Show getShow(String title) {
-         return shows.stream()
-                .filter(show -> ((TaggableContent) show).getTitle().equalsIgnoreCase(title))
-                .findFirst()
-                .orElse(null);
-     }
-
-     public Podcast getPodcast(String title) {
-         return podcasts.stream()
-                .filter(podcast -> ((TaggableContent) podcast).getTitle().equalsIgnoreCase(title))
-                .findFirst()
-                .orElse(null);
-     }
 
     public void removeShow(Show show) {
         shows.remove(show);

@@ -75,16 +75,20 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcastEpisode(String videoID) {
-        // Iterate through all podcasts and their respective episodes to find a matching video ID
-        for (Podcast podcast : podcasts.values()) {
+        boolean found = false;
+        Iterator<Podcast> podcastIterator = podcasts.values().iterator();
+
+        while (!found && podcastIterator.hasNext()) {
+            Podcast podcast = podcastIterator.next();
             Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
-            while (episodeIterator.hasNext()) {
+
+            while (!found && episodeIterator.hasNext()) {
                 if (episodeIterator.next().getVideoID().equalsIgnoreCase(videoID)) {
-                    return true;
+                    found = true;
                 }
             }
         }
-        return false;
+        return found;
     }
 
     @Override
@@ -104,28 +108,40 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean isValidLanguageCode(String code) {
-        for (String lang : Locale.getISOLanguages()) {
-            if (lang.equalsIgnoreCase(code)) return true;
+        boolean isValid = false;
+        String[] languages = Locale.getISOLanguages();
+
+        int i = 0;
+        while (i < languages.length && !isValid) {
+            if (languages[i].equalsIgnoreCase(code)) {
+                isValid = true;
+            }
+            i++;
         }
-        return false;
+        return isValid;
     }
 
     @Override
     public boolean isVideoUsedInShow(String videoID) {
+        boolean found = false;
+
         for (Show show : shows.values()) {
-            if (show.getVideoID().equalsIgnoreCase(videoID)) return true;
+            if (!found && show.getVideoID().equalsIgnoreCase(videoID)) {
+                found = true;
+            }
         }
-        return false;
+        return found;
     }
 
     @Override
     public boolean isValidEpisodeDate(String podcastTitle, String date) {
         Podcast podcast = findPodcast(podcastTitle);
-        // Ensure the new episode's date is chronologically on or after the most recently added episode
+        boolean isValid = true;
+
         if (podcast != null && podcast.hasEpisodes()) {
-            return date.compareTo(podcast.getLatestEpisode().getDate()) >= 0;
+            isValid = date.compareTo(podcast.getLatestEpisode().getDate()) >= 0;
         }
-        return true;
+        return isValid;
     }
 
     @Override
@@ -136,20 +152,23 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     
     @Override
     public boolean hasProductiveAuthors() {
+        boolean hasProductive = false;
+
         for (Author a : authorsMap.values()) {
-            if (a.getProductivity() > 0) return true;
+            if (!hasProductive && a.getProductivity() > 0) {
+                hasProductive = true;
+            }
         }
-        return false;
+        return hasProductive;
     }
     
     @Override
     public boolean isTitleTaggedWith(String title, String tag) {
         Podcast p = findPodcast(title);
         Show s = findShow(title);
-        
-        // A title might be a Podcast or a Show, so we check both collections and verify if the tag exists
-        boolean pTagged = (p != null && ((TaggableContent) p).hasTag(tag));
-        boolean sTagged = (s != null && ((TaggableContent) s).hasTag(tag));
+
+        boolean pTagged = (p != null && p.hasTag(tag));
+        boolean sTagged = (s != null && s.hasTag(tag));
         return pTagged || sTagged;
     }
 
@@ -157,7 +176,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void addPublishableVideo(String videoID, int videoDuration, String url,
                                     String publisher, String title, String languageCode) {
         publishableVideos.put(videoID.toLowerCase(),
-                new PublishableVideoImpl(videoID, videoDuration, url, publisher, title, languageCode));
+                new PublishableVideoImpl(videoID, videoDuration, url,
+                        publisher, title, languageCode));
     }
 
     @Override
@@ -192,16 +212,19 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void addPodcastEpisode(String title, String videoID, int videoDuration,
                                   String episodeUrl, String date, String episodeTitle) {
         Podcast podcast = findPodcast(title);
-        podcast.addEpisode(new PodcastEpisodeImpl(videoID, videoDuration, episodeTitle, episodeUrl, date));
+        podcast.addEpisode(new PodcastEpisodeImpl(videoID, videoDuration,
+                episodeTitle, episodeUrl, date));
     }
 
     @Override
     public void removePodcast(String title) {
         Podcast p = findPodcast(title);
         if (p != null) {
-            Author author = authorsMap.get(((TaggableContent) p).getAuthor().toLowerCase());
-            // Safely remove the content from the author's specific contribution list before deleting it globally
-            if (author != null) author.removePodcast(p); 
+            Author author = authorsMap.get(p.getAuthor().toLowerCase());
+
+            if (author != null) {
+                author.removePodcast(p);
+            }
             podcasts.remove(title.toLowerCase());
         }
     }
@@ -219,30 +242,39 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void removeShow(String title) {
         Show s = findShow(title);
         if (s != null) {
-            Author author = authorsMap.get(((TaggableContent) s).getAuthor().toLowerCase());
-            // Safely remove the content from the author's specific contribution list before deleting it globally
-            if (author != null) author.removeShow(s); 
+            Author author = authorsMap.get(s.getAuthor().toLowerCase());
+
+            if (author != null) {
+                author.removeShow(s);
+            }
             shows.remove(title.toLowerCase());
         }
     }
 
     @Override
     public void addTagToTitle(String title, String tag) {
-        // Apply the tag operation to whichever content type (Podcast or Show) matches the title
         Podcast p = findPodcast(title);
-        if (p != null) ((TaggableContent) p).addTag(tag);
+        if (p != null) {
+            p.addTag(tag);
+        }
         
         Show s = findShow(title);
-        if (s != null) ((TaggableContent) s).addTag(tag);
+        if (s != null) {
+            s.addTag(tag);
+        }
     }
 
     @Override
     public void removeTagFromTitle(String title, String tag) {
         Podcast p = findPodcast(title);
-        if (p != null) ((TaggableContent) p).removeTag(tag);
+        if (p != null) {
+            p.removeTag(tag);
+        }
         
         Show s = findShow(title);
-        if (s != null) ((TaggableContent) s).removeTag(tag);
+        if (s != null) {
+            s.removeTag(tag);
+        }
     }
 
     @Override
@@ -292,44 +324,58 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                 .comparingInt(Author::getProductivity).reversed()
                 .thenComparing(Author::getName, String.CASE_INSENSITIVE_ORDER)
         );
-        
         return productiveAuthors.iterator();
     }
 
-    @Override
     public Iterator<TaggableContent> getTaggedContent(String tag, String filter, String order) {
+        List<TaggableContent> result = buildTaggedContentList(tag, filter);
+        sortTaggedContent(result, order);
+        return result.iterator();
+    }
+
+    private List<TaggableContent> buildTaggedContentList(String tag, String filter) {
         List<TaggableContent> result = new ArrayList<>();
-        
-        // Populate the result list based on the requested filter type (ALL, SHOW, or PODCAST)
+
+        // Populate shows if filter includes ALL or SHOW
         if (filter.equals("ALL") || filter.equals("SHOW")) {
             for (Show s : shows.values()) {
-                if (((TaggableContent) s).hasTag(tag)) {
-                    result.add((TaggableContent) s);
+                if (s.hasTag(tag)) {
+                    result.add(s);
                 }
             }
         }
-        
+
+        // Populate podcasts if filter includes ALL or PODCAST
         if (filter.equals("ALL") || filter.equals("PODCAST")) {
             for (Podcast p : podcasts.values()) {
-                if (((TaggableContent) p).hasTag(tag)) {
-                    result.add((TaggableContent) p);
+                if (p.hasTag(tag)) {
+                    result.add(p);
                 }
             }
         }
-        
-        // Custom sort mapping the ASC/DES parameter to title alphabetization and handling type tie-breakers
-        result.sort((c1, c2) -> {
+        return result;
+    }
+
+    private void sortTaggedContent(List<TaggableContent> list, String order) {
+        list.sort((c1, c2) -> {
             int titleCompare = c1.getTitle().compareToIgnoreCase(c2.getTitle());
-            if (order.equals("DES")) titleCompare *= -1; // Reverse for Descending order
-            
-            if (titleCompare != 0) return titleCompare;
-            
-            // If titles are identical, prioritize Shows over Podcasts as the final tie-breaker
-            if (c1 instanceof Show && c2 instanceof Podcast) return -1;
-            if (c1 instanceof Podcast && c2 instanceof Show) return 1;
-            return 0;
+            if (order.equals("DES")) {
+                titleCompare *= -1;
+            }
+
+            int compareResult = titleCompare;
+
+            if (compareResult == 0) {
+                boolean c1IsShow = c1 instanceof Show;
+                boolean c2IsShow = c2 instanceof Show;
+
+                if (c1IsShow && !c2IsShow) {
+                    compareResult = -1;
+                } else if (!c1IsShow && c2IsShow) {
+                    compareResult = 1;
+                }
+            }
+            return compareResult;
         });
-        
-        return result.iterator();
     }
 }

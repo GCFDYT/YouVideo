@@ -34,6 +34,7 @@ public class Main {
     private static final String EXIT_PROGRAM = "exit";
 
     private static final String CMD_ERR = "Unknown command. Type help to see available commands.";
+    private static final String AVAILABLE_CMDS = "Available commands...";
     private static final String EXIT_MSG = "Bye!";
     private static final String VIDEO_CREATED = "Video %s created successfully.";
     private static final String PREMIUM_VIDEO_CREATED = "PREMIUM Video %s created successfully.";
@@ -52,9 +53,12 @@ public class Main {
     private static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     private static final String SUBTITLE_ENTRY = "- %s (%s)";
     private static final String VIDEO_REMOVED = "Video removed successfully.";
-    private static final String CANT_REMOVE_EPISODE = "Cannot remove: video is an episode of a podcast.";
-    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: video is used in a show.";
-    
+    private static final String NO_REMOVE = "Cannot remove: ";
+    private static final String CANT_REMOVE_EPISODE = NO_REMOVE +
+            "video is an episode of a podcast.";
+    private static final String CANT_REMOVE_USED_VIDEO = NO_REMOVE + "video is used in a show.";
+
+    private static final String TYPE_PODCAST = "Podcast";
     private static final String PODCAST_CREATED = "Podcast created successfully.";
     private static final String PODCAST_EXISTS = "Podcast with this title already exists.";
     private static final String PODCAST_NOT_FOUND = "Podcast does not exist.";
@@ -63,7 +67,9 @@ public class Main {
     private static final String PODCAST_REMOVED = "Podcast removed successfully.";
     private static final String EPISODE_ADDED = "Episode added successfully.";
     private static final String EPISODE_ID_EXISTS = "Episode ID already exists in the system.";
-    private static final String INV_EPISODE_DATE = "Episode date must be >= than latest episode date.";
+    private static final String INV_EPISODE_DATE = "Episode date must be >= " +
+            "than latest episode date.";
+    private static final String EPISODE_PREFIX = "Episode ";
     private static final String EPISODES_HEADER = "Episodes for podcast %s:";
     private static final String EPISODE_ENTRY = "Episode %s: %d min Date: %s";
     private static final String EPISODE_URL = "URL: %s";
@@ -71,7 +77,11 @@ public class Main {
     private static final String AUTHOR_PODCASTS_HEADER = "Podcasts by author %s:";
     private static final String PODCAST_ENTRY = "Podcast: %s Author: %s Language: %s";
     private static final String NO_USER_PODCASTS = "No podcasts found for this author.";
-    
+    private static final String NO_PRODUCTIVE_AUTHORS = "No productive authors.";
+    private static final String AUTHORS_PRODUCTIVITY_HEADER = "Authors productivity:";
+    private static final String AUTHOR_CONTRIBUTIONS_FORMAT = "%s with %d contributions.%n";
+
+    private static final String TYPE_SHOW = "Show";
     private static final String SHOW_CREATED = "Show created successfully.";
     private static final String SHOW_NOT_FOUND = "Video for show does not exist.";
     private static final String SHOW_EXISTS = "Show with this title already exists.";
@@ -88,6 +98,10 @@ public class Main {
     private static final String INVALID_TAG_PARAMS = "Invalid tagged parameters.";
     private static final String NO_TAGGED_CONTENT = "No content tagged with %s.%n";
     private static final String TAGS_HEADER = "Tags:";
+    private static final String TAGGED_CONTENT_HEADER = "Content tagged with %s in %s order:%n";
+    private static final String TAGGED_CONTENT_ENTRY = "%s Title: %s Author: %s%n";
+    private static final String ORDER_ASCENDING = "Ascending";
+    private static final String ORDER_DESCENDING = "Descending";
 
     private static final int IDX_VIDEO_ID = 0;
     private static final int IDX_VIDEO_DURATION = 1;
@@ -108,7 +122,6 @@ public class Main {
         fields[IDX_VIDEO_ID] = scanner.next();
         fields[IDX_VIDEO_DURATION] = String.valueOf(scanner.nextInt());
         fields[IDX_URL] = scanner.next();
-        // Consume newline character left behind by next() to read full lines cleanly
         consumeLine(scanner);
         fields[IDX_PUBLISHER] = readLine(scanner);
         fields[IDX_TITLE] = readLine(scanner);
@@ -170,7 +183,7 @@ public class Main {
                 case ADD_TAG -> addTag(scanner, platform);
                 case REMOVE_TAG -> removeTag(scanner, platform);
                 case TAGGED -> displayTaggedContent(scanner, platform);
-                case DISPLAY_CMD_LIST -> System.out.println("Available commands..."); 
+                case DISPLAY_CMD_LIST -> System.out.println(AVAILABLE_CMDS);
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
                 default -> System.out.println(CMD_ERR);
             }
@@ -275,7 +288,7 @@ public class Main {
             System.out.printf(PUBLISHABLE_NOT_FOUND + "%n", videoID);
         } else {
             PublishableVideo video = platform.getVideo(videoID);
-            // Print different headers depending on whether the video supports premium features
+
             if (video instanceof PremiumVideo) {
                 System.out.printf(PREMIUM_VIDEO_DISPLAY, video.getVideoID(),
                         video.getVideoDuration(), video.getTitle());
@@ -376,7 +389,7 @@ public class Main {
         String url = scanner.next();
         String date = scanner.next();
         consumeLine(scanner);
-        String episodeTitle = "Episode " + videoID;
+        String episodeTitle = EPISODE_PREFIX + videoID;
 
         if (duration <= 0) {
             System.out.println(INV_VALUE);
@@ -410,13 +423,13 @@ public class Main {
                     podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
             
             if (podcast.hasEpisodes()) {
-                System.out.printf(PODCAST_LATEST_EPISODE + "%n", podcast.getLatestEpisode().getDate());
+                System.out.printf(PODCAST_LATEST_EPISODE + "%n",
+                        podcast.getLatestEpisode().getDate());
             }
-            
-            TaggableContent taggable = (TaggableContent) podcast;
-            if (taggable.hasTags()) {
+
+            if (podcast.hasTags()) {
                 System.out.println(TAGS_HEADER);
-                Iterator<String> tagsIt = taggable.getTags();
+                Iterator<String> tagsIt = podcast.getTags();
                 while(tagsIt.hasNext()) {
                     System.out.println(tagsIt.next());
                 }
@@ -538,11 +551,10 @@ public class Main {
             System.out.printf(SHOW_INFO + "%n", show.getDate(), show.getAuthor()); 
             PublishableVideo video = platform.getVideo(show.getVideoID());
             System.out.printf(SHOW_VIDEO + "%n", video.getTitle());
-            
-            TaggableContent taggable = (TaggableContent) show;
-            if (taggable.hasTags()) {
+
+            if (show.hasTags()) {
                 System.out.println(TAGS_HEADER);
-                Iterator<String> tagsIt = taggable.getTags();
+                Iterator<String> tagsIt = show.getTags();
                 while(tagsIt.hasNext()) {
                     System.out.println(tagsIt.next());
                 }
@@ -575,15 +587,14 @@ public class Main {
      */
     private static void displayAuthorsProductivity(StreamingPlatform platform) {
         if (!platform.hasProductiveAuthors()) {
-            System.out.println("No productive authors.");
-            return;
+            System.out.println(NO_PRODUCTIVE_AUTHORS);
         }
         
-        System.out.println("Authors productivity:");
+        System.out.println(AUTHORS_PRODUCTIVITY_HEADER);
         Iterator<Author> it = platform.getAuthorsByProductivity();
         while (it.hasNext()) {
             Author author = it.next();
-            System.out.printf("%s with %d contributions.%n", 
+            System.out.printf(AUTHOR_CONTRIBUTIONS_FORMAT,
                 author.getName(), author.getProductivity());
         }
     }
@@ -639,33 +650,31 @@ public class Main {
      */
     private static void displayTaggedContent(Scanner scanner, StreamingPlatform platform) {
         String tag = scanner.next();
-        String filter = scanner.next().toUpperCase(); 
-        String order = scanner.next().toUpperCase(); 
+        String filter = scanner.next().toUpperCase();
+        String order = scanner.next().toUpperCase();
         consumeLine(scanner);
 
-        boolean validFilter = filter.equals("ALL") || filter.equals("SHOW") || filter.equals("PODCAST");
+        boolean validFilter = filter.equals("ALL") || filter.equals("SHOW")
+                || filter.equals("PODCAST");
         boolean validOrder = order.equals("ASC") || order.equals("DES");
 
-        // Check if the provided filter and order match the acceptable options
         if (!validFilter || !validOrder) {
             System.out.println(INVALID_TAG_PARAMS);
-            return;
         }
 
         Iterator<TaggableContent> it = platform.getTaggedContent(tag, filter, order);
-        
+
         if (!it.hasNext()) {
             System.out.printf(NO_TAGGED_CONTENT, tag);
-            return;
         }
 
-        System.out.printf("Content tagged with %s in %s order:%n", 
-            tag, order.equals("ASC") ? "Ascending" : "Descending");
-        
+        String orderText = order.equals("ASC") ? ORDER_ASCENDING : ORDER_DESCENDING;
+        System.out.printf(TAGGED_CONTENT_HEADER, tag, orderText);
+
         while (it.hasNext()) {
             TaggableContent content = it.next();
-            String type = content instanceof Show ? "Show" : "Podcast";
-            System.out.printf("%s Title: %s Author: %s%n", type, content.getTitle(), content.getAuthor());
+            String type = content instanceof Show ? TYPE_SHOW : TYPE_PODCAST;
+            System.out.printf(TAGGED_CONTENT_ENTRY, type, content.getTitle(), content.getAuthor());
         }
     }
 

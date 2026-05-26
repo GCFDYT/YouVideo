@@ -26,8 +26,6 @@ public class PodcastEpisodeImpl extends AbstractVideo implements PodcastEpisode 
         this.date = date;
     }
 
-    
-
     @Override
     public String getUrl() {
         return url;

@@ -6,8 +6,6 @@ import java.util.Iterator;
  */
 public interface StreamingPlatform {
 
-    // --- Pre-condition Checks ---
-
     /**
      * Checks if a video exists with the given ID.
      * @param videoID - the ID of the video to check.
@@ -88,8 +86,6 @@ public interface StreamingPlatform {
      * @pre author != null
      */
     boolean hasAuthorPodcasts(String author);
-    
-    // Phase 2 Pre-conditions
 
     /**
      * Checks if there are any authors with content contributions.
@@ -105,8 +101,6 @@ public interface StreamingPlatform {
      * @pre title != null && tag != null
      */
     boolean isTitleTaggedWith(String title, String tag);
-
-    // --- Commands ---
 
     /**
      * Adds a new standard publishable video to the platform.
@@ -205,8 +199,6 @@ public interface StreamingPlatform {
      * @pre title != null && hasShow(title)
      */
     void removeShow(String title);
-    
-    // Phase 2 Commands
 
     /**
      * Assigns a tag to a specified title (podcast or show).
@@ -225,8 +217,6 @@ public interface StreamingPlatform {
      * @pre isTitleTaggedWith(title, tag)
      */
     void removeTagFromTitle(String title, String tag);
-
-    // --- Queries ---
 
     /**
      * Returns a publishable video by its ID.
@@ -275,8 +265,6 @@ public interface StreamingPlatform {
      * @pre title != null && hasShow(title)
      */
     Show getShow(String title);
-    
-    // Phase 2 Queries
 
     /**
      * Returns an iterator over authors ordered by their productivity (number of contributions).
