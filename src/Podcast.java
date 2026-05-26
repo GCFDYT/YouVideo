@@ -4,7 +4,7 @@ import java.util.Iterator;
  * Interface representing a podcast containing a collection of video episodes.
  * @author Gonçalo Domingos and João Domingues
  */
-public interface Podcast extends AbstractTaggableContent {
+public interface Podcast extends TaggableContent {
     /**
      * Gets the language code of the podcast.
      * @return the two-character language code

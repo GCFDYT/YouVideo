@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Represents the base abstraction of a video in the system.
  * @author Gonçalo Domingos and João Domingues

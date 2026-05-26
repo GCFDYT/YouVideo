@@ -2,7 +2,7 @@
  * Represents a video that can be independently published in the system.
  * @author Gonçalo Domingos and João Domingues
  */
-public interface PublishableVideo extends AbstractVideo {
+public interface PublishableVideo extends Video {
 
     /**
      * Returns the file URL of the video.

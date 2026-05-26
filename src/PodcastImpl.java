@@ -1,13 +1,12 @@
-package Core;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Implementation of a podcast, containing a collection of episodes.
- * * @author Gonçalo Domingos and João Domingues
- */
+ * @author Gonçalo Domingos and João Domingues
+ * 
+**/
 public class PodcastImpl extends AbstractTaggableContent implements Podcast {
 
     private final String languageCode;
@@ -27,6 +26,8 @@ public class PodcastImpl extends AbstractTaggableContent implements Podcast {
 
     @Override
     public void addEpisode(PodcastEpisode episode) {
+        // Note: If you are using an older version of Java (pre-Java 21) 
+        // and it complains about addFirst on a List, change this to: episodes.add(0, episode);
         episodes.addFirst(episode);
     }
 

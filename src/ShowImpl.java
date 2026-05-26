@@ -4,7 +4,7 @@
  *
  * @author Gonçalo Domingos and João Domingues
  */
-public class ShowImpl extends AbstractTaggableContentImpl implements Show {
+public class ShowImpl extends AbstractTaggableContent implements Show {
     
     private final String videoID;
     private final String date;

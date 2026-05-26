@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Implementation of a podcast episode, extending the abstract video class.
  * Represents a single episode within a podcast, containing its file URL and release date.
@@ -7,7 +5,7 @@ package Core;
  *
  * @author Gonçalo Domingos and João Domingues
  */
-public class PodcastEpisodeImpl extends AbstractVideoImpl implements PodcastEpisode {
+public class PodcastEpisodeImpl extends AbstractVideo implements PodcastEpisode {
 
     private final String url;
     private final String date;
@@ -27,6 +25,8 @@ public class PodcastEpisodeImpl extends AbstractVideoImpl implements PodcastEpis
         this.url = url;
         this.date = date;
     }
+
+    
 
     @Override
     public String getUrl() {

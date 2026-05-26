@@ -2,7 +2,7 @@
  * Represents an unpublishable video that acts as an episode within a podcast.
  * @author Gonçalo Domingos and João Domingues
  */
-public interface PodcastEpisode extends AbstractVideo {
+public interface PodcastEpisode extends Video {
 
     /**
      * Returns the file URL of the episode.

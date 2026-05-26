@@ -2,7 +2,7 @@
  * Implementation of a standard publishable video without subtitle support.
  * @author Gonçalo Domingos and João Domingues
  */
-public class PublishableVideoImpl extends AbstractVideoImpl implements PublishableVideo {
+public class PublishableVideoImpl extends AbstractVideo implements PublishableVideo {
 
     private final String url;
     private final String publisher;
