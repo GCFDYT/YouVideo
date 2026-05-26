@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Represents a subtitle file for premium videos.
  * @author Gonçalo Domingos and João Domingues

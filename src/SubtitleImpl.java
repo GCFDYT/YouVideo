@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Record implementation of a Subtitle, representing a subtitle file for a premium video.
  * Contains the file URL and the language code of the subtitle track.

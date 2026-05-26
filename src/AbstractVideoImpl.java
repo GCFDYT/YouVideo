@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Abstract base class implementing the AbstractVideo interface.
  * Provides common attributes and behavior for all video types in the system.

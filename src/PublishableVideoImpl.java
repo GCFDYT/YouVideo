@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Implementation of a standard publishable video without subtitle support.
  * @author Gonçalo Domingos and João Domingues

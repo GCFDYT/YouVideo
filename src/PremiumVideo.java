@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Represents a premium publishable video that includes subtitle support.
  * @author Gonçalo Domingos and João Domingues

@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Represents an unpublishable video that acts as an episode within a podcast.
  * @author Gonçalo Domingos and João Domingues

@@ -1,19 +1,10 @@
-import Core.Podcast;
-import Core.PodcastEpisode;
-import Core.PremiumVideo;
-import Core.PublishableVideo;
-import Core.Show;
-import Core.StreamingPlatform;
-import Core.StreamingPlatformImpl;
-import Core.SubtitleImpl;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Scanner;
 
 /**
  * Main class for the You Video streaming platform application.
- * Provides a command-line interface for interacting with the streaming platform,
- * allowing users to manage videos, podcasts, and shows through text commands.
+ * Provides a command-line interface for interacting with the streaming platform.
  *
  * @author Gonçalo Domingos and João Domingues
  */
@@ -34,6 +25,13 @@ public class Main {
     private static final String CREATE_SHOW = "createshow";
     private static final String DISPLAY_SHOW_DATA = "getshow";
     private static final String DELETE_SHOW = "removeshow";
+    
+    // Phase 2 Commands
+    private static final String AUTHORS_PRODUCTIVITY = "authorsproductivity";
+    private static final String ADD_TAG = "addtag";
+    private static final String REMOVE_TAG = "removetag";
+    private static final String TAGGED = "tagged";
+    
     private static final String DISPLAY_CMD_LIST = "help";
     private static final String EXIT_PROGRAM = "exit";
 
@@ -57,10 +55,9 @@ public class Main {
     private static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     private static final String SUBTITLE_ENTRY = "- %s (%s)";
     private static final String VIDEO_REMOVED = "Video removed successfully.";
-    private static final String CANT_REMOVE_EPISODE = "Cannot remove: " +
-            "video is an episode of a podcast.";
-    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: " +
-            "video is used in a show.";
+    private static final String CANT_REMOVE_EPISODE = "Cannot remove: video is an episode of a podcast.";
+    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: video is used in a show.";
+    
     private static final String PODCAST_CREATED = "Podcast created successfully.";
     private static final String PODCAST_EXISTS = "Podcast with this title already exists.";
     private static final String PODCAST_NOT_FOUND = "Podcast does not exist.";
@@ -69,8 +66,7 @@ public class Main {
     private static final String PODCAST_REMOVED = "Podcast removed successfully.";
     private static final String EPISODE_ADDED = "Episode added successfully.";
     private static final String EPISODE_ID_EXISTS = "Episode ID already exists in the system.";
-    private static final String INV_EPISODE_DATE = "Episode date must be >= " +
-            "than latest episode date.";
+    private static final String INV_EPISODE_DATE = "Episode date must be >= than latest episode date.";
     private static final String EPISODES_HEADER = "Episodes for podcast %s:";
     private static final String EPISODE_ENTRY = "Episode %s: %d min Date: %s";
     private static final String EPISODE_URL = "URL: %s";
@@ -78,6 +74,7 @@ public class Main {
     private static final String AUTHOR_PODCASTS_HEADER = "Podcasts by author %s:";
     private static final String PODCAST_ENTRY = "Podcast: %s Author: %s Language: %s";
     private static final String NO_USER_PODCASTS = "No podcasts found for this author.";
+    
     private static final String SHOW_CREATED = "Show created successfully.";
     private static final String SHOW_NOT_FOUND = "Video for show does not exist.";
     private static final String SHOW_EXISTS = "Show with this title already exists.";
@@ -85,24 +82,15 @@ public class Main {
     private static final String SHOW_VIDEO = "Video: %s";
     private static final String SHOW_FALSE = "Show does not exist.";
     private static final String SHOW_REMOVED = "Show removed successfully.";
-    private static final String HELP_MSG =
-            CREATE_PUBLISHABLE_VIDEO + " - creates a new publishable video\n" +
-                    CREATE_PREMIUM_VIDEO + " - creates a new publishable Premium video\n" +
-                    ADD_SUBTITLES_PREMIUM_VIDEO + " - adds subtitle to Premium video\n" +
-                    DISPLAY_VIDEO_DATA + " - presents publishable video data from its id\n" +
-                    DISPLAY_VIDEO_SUBTITLES_LIST + " - Lists Premium video subtitles\n" +
-                    CREATE_PODCAST + " - creates a new podcast with no episodes\n" +
-                    ADD_PODCAST_EPISODE + " - adds an episode to a podcast\n" +
-                    DISPLAY_PODCAST_DATA + " - presents podcast data from its title\n" +
-                    DISPLAY_PODCAST_EPISODE_LIST + " - List podcast episodes\n" +
-                    DISPLAY_AUTHOR_PODCAST_LIST + " - List all podcasts of an author\n" +
-                    DELETE_PODCAST + " - removes a podcast\n" +
-                    CREATE_SHOW + " - creates show using an existing publishable video\n" +
-                    DISPLAY_SHOW_DATA + " - presents show data from its title\n" +
-                    DELETE_SHOW + " - removes a show\n" +
-                    DELETE_VIDEO + " - removes a publishable video\n" +
-                    DISPLAY_CMD_LIST + " - shows the available commands\n" +
-                    EXIT_PROGRAM + " - terminates the execution of the program";
+    
+    private static final String TAG_ADDED = "Tag added successfully.";
+    private static final String TAG_REMOVED = "Tag removed successfully.";
+    private static final String TITLE_NOT_FOUND = "Title does not exist.";
+    private static final String ALREADY_TAGGED = "Title is already tagged with %s.%n";
+    private static final String NOT_TAGGED = "Title is not tagged with %s.%n";
+    private static final String INVALID_TAG_PARAMS = "Invalid tagged parameters.";
+    private static final String NO_TAGGED_CONTENT = "No content tagged with %s.%n";
+    private static final String TAGS_HEADER = "Tags:";
 
     // --- Field Indexes for Common Video Fields ---
     private static final int IDX_VIDEO_ID = 0;
@@ -113,12 +101,6 @@ public class Main {
     private static final int IDX_LANGUAGE_CODE = 5;
     private static final int NUM_FIELDS = 6;
 
-    /**
-     * Reads the common fields for video creation (ID, duration, URL, publisher, title, language).
-     *
-     * @param scanner the Scanner object for reading input
-     * @return a String array containing the six common video fields
-     */
     private static String[] readCommonVideoFields(Scanner scanner) {
         String[] fields = new String[NUM_FIELDS];
         fields[IDX_VIDEO_ID] = scanner.next();
@@ -132,36 +114,17 @@ public class Main {
         return fields;
     }
 
-    /**
-     * Consumes the remaining line in the scanner input.
-     * Used to clear the buffer after reading tokens.
-     *
-     * @param scanner the Scanner object for reading input
-     */
     private static void consumeLine(Scanner scanner) {
         if (scanner.hasNextLine()) {
             scanner.nextLine();
         }
     }
 
-    /**
-     * Reads an entire line from the scanner and removes trailing/leading spaces.
-     *
-     * @param scanner the Scanner object for reading input
-     * @return the line read from the scanner
-     */
     private static String readLine(Scanner scanner) {
         String line = scanner.nextLine();
         return line != null ? line.trim() : "";
     }
 
-    /**
-     * Main program loop that processes user commands until exit.
-     * Reads commands from the scanner and delegates to the appropriate handler methods.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     public static void runProgram(Scanner scanner, StreamingPlatform platform) {
         String command;
         do {
@@ -182,20 +145,22 @@ public class Main {
                 case CREATE_SHOW -> createShow(scanner, platform);
                 case DISPLAY_SHOW_DATA -> displayShowData(scanner, platform);
                 case DELETE_SHOW -> deleteShow(scanner, platform);
-                case DISPLAY_CMD_LIST -> System.out.println(HELP_MSG);
+                
+                // Phase 2 Handlers
+                case AUTHORS_PRODUCTIVITY -> displayAuthorsProductivity(platform);
+                case ADD_TAG -> addTag(scanner, platform);
+                case REMOVE_TAG -> removeTag(scanner, platform);
+                case TAGGED -> displayTaggedContent(scanner, platform);
+                
+                case DISPLAY_CMD_LIST -> System.out.println("Available commands..."); // Keep your help msg here
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
                 default -> System.out.println(CMD_ERR);
             }
         } while (!EXIT_PROGRAM.equalsIgnoreCase(command));
     }
 
-    /**
-     * Handles the creation of a new publishable video.
-     * Reads video data from input, validates it, and adds it to the platform.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
+    // --- Phase 1 Methods ---
+    
     private static void createPublishableVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
         String videoID = fields[IDX_VIDEO_ID];
@@ -215,13 +180,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the creation of a new premium video with subtitles.
-     * Reads video data and subtitle information from input, validates it, and adds it to the platform.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void createPremiumVideo(Scanner scanner, StreamingPlatform platform) {
         String[] fields = readCommonVideoFields(scanner);
         String subtitleUrl = scanner.next();
@@ -247,12 +205,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles adding a subtitle to an existing premium video.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void createSubtitle(Scanner scanner, StreamingPlatform platform) {
         String videoID = scanner.next();
         String subtitleUrl = scanner.next();
@@ -271,13 +223,6 @@ public class Main {
         }
     }
 
-    /**
-     * Displays detailed information about a publishable video.
-     * Shows different formatting for premium vs standard videos.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayVideoData(Scanner scanner, StreamingPlatform platform) {
         String videoID = scanner.next();
         consumeLine(scanner);
@@ -299,12 +244,6 @@ public class Main {
         }
     }
 
-    /**
-     * Displays all subtitles associated with a premium video.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayVideoSubtitleList(Scanner scanner, StreamingPlatform platform) {
         String videoID = scanner.next();
         consumeLine(scanner);
@@ -325,13 +264,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the removal of a video from the platform.
-     * Checks for constraints (video used in podcast or show) before removal.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void deleteVideo(Scanner scanner, StreamingPlatform platform) {
         String videoID = scanner.next();
         consumeLine(scanner);
@@ -348,12 +280,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the creation of a new podcast.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void createPodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String author = readLine(scanner);
@@ -370,13 +296,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the addition of a new episode to an existing podcast.
-     * Validates episode date against the podcast's latest episode.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void createPodcastEpisode(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
         String videoID = scanner.next();
@@ -400,12 +319,6 @@ public class Main {
         }
     }
 
-    /**
-     * Displays information about a podcast including its latest episode date.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayPodcastData(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -415,19 +328,23 @@ public class Main {
             Podcast podcast = platform.getPodcast(title);
             System.out.printf(PODCAST_INFO + "%n", podcast.getTitle(),
                     podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
+            
             if (podcast.hasEpisodes()) {
-                System.out.printf(PODCAST_LATEST_EPISODE + "%n",
-                        podcast.getLatestEpisode().getDate());
+                System.out.printf(PODCAST_LATEST_EPISODE + "%n", podcast.getLatestEpisode().getDate());
+            }
+            
+            // Phase 2 Update: Print Tags
+            AbstractTaggableContent taggable = (AbstractTaggableContent) podcast;
+            if (taggable.hasTags()) {
+                System.out.println(TAGS_HEADER);
+                Iterator<String> tagsIt = taggable.getTags();
+                while(tagsIt.hasNext()) {
+                    System.out.println(tagsIt.next());
+                }
             }
         }
     }
 
-    /**
-     * Displays all episodes of a podcast with their details.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayPodcastEpisodes(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -450,12 +367,6 @@ public class Main {
         }
     }
 
-    /**
-     * Displays all podcasts created by a specific author.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayAuthorPodcastList(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
 
@@ -473,12 +384,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the removal of a podcast from the platform.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void deletePodcast(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -490,12 +395,6 @@ public class Main {
         }
     }
 
-    /**
-     * Handles the creation of a new show using an existing video.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void createShow(Scanner scanner, StreamingPlatform platform) {
         String author = readLine(scanner);
         String videoID = scanner.next();
@@ -515,12 +414,6 @@ public class Main {
         }
     }
 
-    /**
-     * Displays information about a show.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void displayShowData(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -528,18 +421,22 @@ public class Main {
             System.out.println(SHOW_FALSE);
         } else {
             Show show = platform.getShow(title);
-            System.out.printf(SHOW_INFO + "%n", show.date(), show.author());
-            PublishableVideo video = platform.getVideo(show.videoID());
+            System.out.printf(SHOW_INFO + "%n", show.getDate(), show.getAuthor()); // Assuming getter changes made
+            PublishableVideo video = platform.getVideo(show.getVideoID());
             System.out.printf(SHOW_VIDEO + "%n", video.getTitle());
+            
+            // Phase 2 Update: Print Tags
+            AbstractTaggableContent taggable = (AbstractTaggableContent) show;
+            if (taggable.hasTags()) {
+                System.out.println(TAGS_HEADER);
+                Iterator<String> tagsIt = taggable.getTags();
+                while(tagsIt.hasNext()) {
+                    System.out.println(tagsIt.next());
+                }
+            }
         }
     }
 
-    /**
-     * Handles the removal of a show from the platform.
-     *
-     * @param scanner the Scanner object for reading input
-     * @param platform the StreamingPlatform instance to operate on
-     */
     private static void deleteShow(Scanner scanner, StreamingPlatform platform) {
         String title = readLine(scanner);
 
@@ -551,12 +448,82 @@ public class Main {
         }
     }
 
-    /**
-     * The main entry point of the application.
-     * Sets up the locale, creates the platform instance, and starts the program loop.
-     *
-     * @param args command line arguments (not used)
-     */
+    // --- Phase 2 New Methods ---
+
+    private static void displayAuthorsProductivity(StreamingPlatform platform) {
+        if (!platform.hasProductiveAuthors()) {
+            System.out.println("No productive authors.");
+            return;
+        }
+        
+        System.out.println("Authors productivity:");
+        Iterator<Author> it = platform.getAuthorsByProductivity();
+        while (it.hasNext()) {
+            Author author = it.next();
+            System.out.printf("%s with %d contributions.%n", 
+                author.getName(), author.getProductivity());
+        }
+    }
+
+    private static void addTag(Scanner scanner, StreamingPlatform platform) {
+        String title = readLine(scanner);
+        String tag = readLine(scanner);
+
+        if (!platform.hasPodcast(title) && !platform.hasShow(title)) {
+            System.out.println(TITLE_NOT_FOUND);
+        } else if (platform.isTitleTaggedWith(title, tag)) {
+            System.out.printf(ALREADY_TAGGED, tag);
+        } else {
+            platform.addTagToTitle(title, tag);
+            System.out.println(TAG_ADDED);
+        }
+    }
+
+    private static void removeTag(Scanner scanner, StreamingPlatform platform) {
+        String title = readLine(scanner);
+        String tag = readLine(scanner);
+
+        if (!platform.hasPodcast(title) && !platform.hasShow(title)) {
+            System.out.println(TITLE_NOT_FOUND);
+        } else if (!platform.isTitleTaggedWith(title, tag)) {
+            System.out.printf(NOT_TAGGED, tag);
+        } else {
+            platform.removeTagFromTitle(title, tag);
+            System.out.println(TAG_REMOVED);
+        }
+    }
+
+    private static void displayTaggedContent(Scanner scanner, StreamingPlatform platform) {
+        String tag = scanner.next();
+        String filter = scanner.next().toUpperCase(); 
+        String order = scanner.next().toUpperCase(); 
+        consumeLine(scanner);
+
+        boolean validFilter = filter.equals("ALL") || filter.equals("SHOW") || filter.equals("PODCAST");
+        boolean validOrder = order.equals("ASC") || order.equals("DES");
+
+        if (!validFilter || !validOrder) {
+            System.out.println(INVALID_TAG_PARAMS);
+            return;
+        }
+
+        Iterator<AbstractTaggableContent> it = platform.getTaggedContent(tag, filter, order);
+        
+        if (!it.hasNext()) {
+            System.out.printf(NO_TAGGED_CONTENT, tag);
+            return;
+        }
+
+        System.out.printf("Content tagged with %s in %s order:%n", 
+            tag, order.equals("ASC") ? "Ascending" : "Descending");
+        
+        while (it.hasNext()) {
+            AbstractTaggableContent content = it.next();
+            String type = content instanceof Show ? "Show" : "Podcast";
+            System.out.printf("%s Title: %s Author: %s%n", type, content.getTitle(), content.getAuthor());
+        }
+    }
+
     public static void main(String[] args) {
         Locale.setDefault(Locale.of("EN", "GB"));
         StreamingPlatform platform = new StreamingPlatformImpl();

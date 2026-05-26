@@ -1,5 +1,3 @@
-package Core;
-
 /**
  * Represents a video that can be independently published in the system.
  * @author Gonçalo Domingos and João Domingues

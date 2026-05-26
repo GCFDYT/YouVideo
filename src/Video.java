@@ -4,7 +4,7 @@ package Core;
  * Represents the base abstraction of a video in the system.
  * @author Gonçalo Domingos and João Domingues
  */
-public interface AbstractVideo {
+public interface Video {
 
     /**
      * Returns the unique identifier of the video.
