@@ -1,8 +1,8 @@
 package Core;
 
-import dataStructures.Array;
-import dataStructures.ArrayClass;
-import dataStructures.Iterator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Implementation of a podcast, containing a collection of episodes.
@@ -16,7 +16,7 @@ public class PodcastImpl implements Podcast {
     private final String title;
     private final String author;
     private final String languageCode;
-    private final Array<PodcastEpisode> episodes;
+    private final List<PodcastEpisode> episodes;
 
     /**
      * Constructs a new podcast with the specified properties and no episodes.
@@ -29,7 +29,7 @@ public class PodcastImpl implements Podcast {
         this.title = title;
         this.author = author;
         this.languageCode = languageCode;
-        this.episodes = new ArrayClass<>();
+        this.episodes = new LinkedList<>();
     }
 
     @Override
@@ -49,11 +49,11 @@ public class PodcastImpl implements Podcast {
 
     @Override
     public void addEpisode(PodcastEpisode episode) {
-        episodes.insertAt(episode, 0);
+        episodes.addFirst(episode);
     }
 
     @Override
-    public Iterator<PodcastEpisode> getEpisodes() {
+    public java.util.Iterator<PodcastEpisode> getEpisodes() {
         return episodes.iterator();
     }
 

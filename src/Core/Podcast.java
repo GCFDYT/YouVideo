@@ -1,7 +1,5 @@
 package Core;
 
-import dataStructures.Iterator;
-
 /**
  * Represents a podcast containing a collection of video episodes.
  * @author Gonçalo Domingos and João Domingues
@@ -35,9 +33,10 @@ public interface Podcast {
 
     /**
      * Returns an iterator over the episodes in reverse chronological order.
+     *
      * @return returns an <code>Iterator</code> of podcast episodes.
      */
-    Iterator<PodcastEpisode> getEpisodes();
+    java.util.Iterator<PodcastEpisode> getEpisodes();
 
     /**
      * Checks if the podcast currently has any episodes.

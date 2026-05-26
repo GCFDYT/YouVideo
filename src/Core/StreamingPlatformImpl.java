@@ -1,8 +1,6 @@
 package Core;
 
-import dataStructures.Array;
-import dataStructures.ArrayClass;
-import dataStructures.Iterator;
+import java.util.*;
 import java.util.Locale;
 
 /**
@@ -13,18 +11,18 @@ import java.util.Locale;
  */
 public class StreamingPlatformImpl implements StreamingPlatform {
 
-    private final Array<PublishableVideo> publishableVideos;
-    private final Array<Podcast> podcasts;
-    private final Array<Show> shows;
+    private final Map<String, PublishableVideo> publishableVideos;
+    private final Map<String, Podcast> podcasts;
+    private final Map<String, Show> shows;
 
     /**
      * Constructs a new StreamingPlatformImpl with pre-allocated storage.
      * Initial capacity for each internal array is set to 50 elements.
      */
     public StreamingPlatformImpl() {
-        publishableVideos = new ArrayClass<>(50);
-        podcasts = new ArrayClass<>(50);
-        shows = new ArrayClass<>(50);
+        publishableVideos = new HashMap<>();
+        podcasts = new HashMap<>();
+        shows = new HashMap<>();
     }
 
     // --- Internal Helpers ---
@@ -37,17 +35,8 @@ public class StreamingPlatformImpl implements StreamingPlatform {
      * @return the {@code PublishableVideo} if found, or {@code null} if no video matches the ID
      */
     private PublishableVideo findPublishableVideo(String videoID) {
-        PublishableVideo result = null;
-        Iterator<PublishableVideo> iterator = publishableVideos.iterator();
-        while (iterator.hasNext() && result == null) {
-            PublishableVideo video = iterator.next();
-            if (video.getVideoID().equalsIgnoreCase(videoID)) {
-                result = video;
-            }
-        }
-        return result;
+        return publishableVideos.get(videoID.toLowerCase());
     }
-
     /**
      * Standardizes the casing of an author or publisher's name.
      * Checks existing videos, podcasts, and shows to see if the author/publisher
@@ -58,28 +47,20 @@ public class StreamingPlatformImpl implements StreamingPlatform {
      * @return the standardized name string if a prior record exists, or the original provided name if it is a new author
      */
     private String getStandardizedName(String name) {
-        // 1. Check if they already exist as a Video Publisher
-        Iterator<PublishableVideo> itVid = publishableVideos.iterator();
-        while (itVid.hasNext()) {
-            PublishableVideo v = itVid.next();
+        for (PublishableVideo v : publishableVideos.values()) {
             if (v.getPublisher().equalsIgnoreCase(name)) {
                 return v.getPublisher();
             }
         }
 
-        // 2. Check if they already exist as a Podcast Author
-        Iterator<Podcast> itPod = podcasts.iterator();
-        while (itPod.hasNext()) {
-            Podcast p = itPod.next();
+        for (Podcast p : podcasts.values()) {
             if (p.getAuthor().equalsIgnoreCase(name)) {
                 return p.getAuthor();
             }
         }
 
         // 3. Check if they already exist as a Show Author
-        Iterator<Show> itShow = shows.iterator();
-        while (itShow.hasNext()) {
-            Show s = itShow.next();
+        for (Show s : shows.values()) {
             if (s.author().equalsIgnoreCase(name)) {
                 return s.author();
             }
@@ -97,15 +78,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
      * @return the {@code Podcast} if found, or {@code null} if no podcast matches the title
      */
     private Podcast findPodcast(String title) {
-        Podcast result = null;
-        Iterator<Podcast> iterator = podcasts.iterator();
-        while (iterator.hasNext() && result == null) {
-            Podcast podcast = iterator.next();
-            if (podcast.getTitle().equalsIgnoreCase(title)) {
-                result = podcast;
-            }
-        }
-        return result;
+        return podcasts.get(title.toLowerCase());
     }
 
     /**
@@ -116,15 +89,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
      * @return the {@code Show} if found, or {@code null} if no show matches the title
      */
     private Show findShow(String title) {
-        Show result = null;
-        Iterator<Show> iterator = shows.iterator();
-        while (iterator.hasNext() && result == null) {
-            Show show = iterator.next();
-            if (show.title().equalsIgnoreCase(title)) {
-                result = show;
-            }
-        }
-        return result;
+        return shows.get(title.toLowerCase());
     }
 
     // --- Pre-condition Checks ---
@@ -138,14 +103,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPublishableVideo(String videoID) {
-        PublishableVideo searchKey = new PublishableVideoImpl(videoID, 0, "", "", "", "");
-        return publishableVideos.searchForward(searchKey);
+        return publishableVideos.containsKey(videoID.toLowerCase());
     }
 
     @Override
     public boolean hasPodcastEpisode(String videoID) {
         boolean found = false;
-        Iterator<Podcast> podcastIterator = podcasts.iterator();
+        Iterator<Podcast> podcastIterator = podcasts.values().iterator();
         while (podcastIterator.hasNext() && !found) {
             Podcast podcast = podcastIterator.next();
             Iterator<PodcastEpisode> episodeIterator = podcast.getEpisodes();
@@ -167,15 +131,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasPodcast(String title) {
-        boolean found = false;
-        Iterator<Podcast> iterator = podcasts.iterator();
-        while (iterator.hasNext() && !found) {
-            Podcast podcast = iterator.next();
-            if (podcast.getTitle().equalsIgnoreCase(title)) {
-                found = true;
-            }
-        }
-        return found;
+        return podcasts.containsKey(title.toLowerCase());
     }
 
     @Override
@@ -199,15 +155,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean isVideoUsedInShow(String videoID) {
-        boolean found = false;
-        Iterator<Show> iterator = shows.iterator();
-        while (iterator.hasNext() && !found) {
-            Show show = iterator.next();
+        boolean videoUsed = false;
+        for (Show show : shows.values()) {
             if (show.videoID().equalsIgnoreCase(videoID)) {
-                found = true;
+                videoUsed = true;
             }
         }
-        return found;
+        return videoUsed;
     }
 
     @Override
@@ -222,15 +176,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean hasAuthorPodcasts(String author) {
-        boolean found = false;
-        Iterator<Podcast> iterator = podcasts.iterator();
-        while (iterator.hasNext() && !found) {
-            Podcast podcast = iterator.next();
+        boolean authorPodcasts = false;
+        for (Podcast podcast : podcasts.values()) {
             if (podcast.getAuthor().equalsIgnoreCase(author)) {
-                found = true;
+                authorPodcasts = true;
             }
         }
-        return found;
+        return authorPodcasts;
     }
 
     // --- Commands ---
@@ -239,8 +191,9 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     public void addPublishableVideo(String videoID, int videoDuration, String url,
                                     String publisher, String title, String languageCode) {
         String finalPublisher = getStandardizedName(publisher);
-        publishableVideos.insertLast(new PublishableVideoImpl(videoID,
-                videoDuration, url, finalPublisher, title, languageCode));
+        publishableVideos.put(videoID.toLowerCase(),
+                new PublishableVideoImpl(videoID, videoDuration, url,
+                        finalPublisher, title, languageCode));
     }
 
     @Override
@@ -248,8 +201,10 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                                 String publisher, String title, String languageCode,
                                 String subtitleUrl, String subtitleLanguageCode) {
         String finalPublisher = getStandardizedName(publisher);
-        publishableVideos.insertLast(new PremiumVideoImpl(videoID, videoDuration, url,
-                finalPublisher, title, languageCode, subtitleUrl, subtitleLanguageCode));
+        publishableVideos.put(videoID.toLowerCase(),
+                new PremiumVideoImpl(videoID, videoDuration, url,
+                        finalPublisher, title, languageCode,
+                        subtitleUrl, subtitleLanguageCode));
     }
 
     @Override
@@ -260,17 +215,13 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removeVideo(String videoID) {
-        PublishableVideo searchKey = new PublishableVideoImpl(videoID, 0, "", "", "", "");
-        int index = publishableVideos.searchIndexOf(searchKey);
-        if (index != -1) {
-            publishableVideos.removeAt(index);
-        }
+        publishableVideos.remove(videoID.toLowerCase());
     }
 
     @Override
     public void addPodcast(String title, String author, String languageCode) {
         String finalAuthor = getStandardizedName(author);
-        podcasts.insertLast(new PodcastImpl(title, finalAuthor, languageCode));
+        podcasts.put(title.toLowerCase(), new PodcastImpl(title, finalAuthor, languageCode));
     }
 
     @Override
@@ -283,37 +234,20 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void removePodcast(String title) {
-        int index = -1;
-        Iterator<Podcast> iterator = podcasts.iterator();
-        int i = 0;
-        while (iterator.hasNext() && index == -1) {
-            Podcast podcast = iterator.next();
-            if (podcast.getTitle().equalsIgnoreCase(title)) {
-                index = i;
-            }
-            i++;
-        }
-        if (index != -1) {
-            podcasts.removeAt(index);
-        }
+        podcasts.remove(title.toLowerCase());
     }
 
     @Override
     public void addShow(String author, String videoID, String date) {
         PublishableVideo v = findPublishableVideo(videoID);
         String finalAuthor = getStandardizedName(author);
-        shows.insertLast(new ShowImpl(finalAuthor, v.getTitle(), videoID, date));
+        shows.put(v.getTitle().toLowerCase(), new ShowImpl(finalAuthor,
+                v.getTitle(), videoID, date));
     }
 
     @Override
     public void removeShow(String title) {
-        Show toRemove = findShow(title);
-        if (toRemove != null) {
-            int index = shows.searchIndexOf(toRemove);
-            if (index != -1) {
-                shows.removeAt(index);
-            }
-        }
+        shows.remove(title.toLowerCase());
     }
 
     // --- Queries ---
@@ -324,7 +258,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Iterator<SubtitleImpl> getSubtitles(String videoID) {
+    public java.util.Iterator<SubtitleImpl> getSubtitles(String videoID) {
         PremiumVideo premiumVideo = (PremiumVideo) findPublishableVideo(videoID);
         return premiumVideo.getSubtitles();
     }
@@ -335,7 +269,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Iterator<PodcastEpisode> getPodcastEpisodes(String title) {
+    public java.util.Iterator<PodcastEpisode> getPodcastEpisodes(String title) {
         Podcast podcast = findPodcast(title);
         Iterator<PodcastEpisode> result;
         if (podcast == null) {
@@ -347,12 +281,12 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     }
 
     @Override
-    public Iterator<Podcast> getAuthorPodcasts(String author) {
-        Array<Podcast> authorPodcasts = new ArrayClass<>();
-        for (Iterator<Podcast> iterator = podcasts.iterator(); iterator.hasNext(); ) {
-            Podcast podcast = iterator.next();
+    public java.util.Iterator<Podcast> getAuthorPodcasts(String author) {
+        List<Podcast> authorPodcasts = new ArrayList<>();
+
+        for (Podcast podcast : podcasts.values()) {
             if (podcast.getAuthor().equalsIgnoreCase(author)) {
-                authorPodcasts.insertLast(podcast);
+                authorPodcasts.add(podcast);
             }
         }
         return authorPodcasts.iterator();

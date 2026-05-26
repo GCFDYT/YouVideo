@@ -6,7 +6,7 @@ import Core.Show;
 import Core.StreamingPlatform;
 import Core.StreamingPlatformImpl;
 import Core.SubtitleImpl;
-import dataStructures.Iterator;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Scanner;
 

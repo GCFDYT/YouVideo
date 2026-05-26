@@ -1,7 +1,5 @@
 package Core;
 
-import dataStructures.Iterator;
-
 /**
  * Main interface for the You Video streaming platform, managing videos, podcasts, and shows.
  * @author Gonçalo Domingos and João Domingues
@@ -188,11 +186,12 @@ public interface StreamingPlatform {
 
     /**
      * Returns an iterator with the subtitles of a premium video.
-     * @pre isPremiumVideo(videoID)
+     *
      * @param videoID - the unique identifier of the premium video.
      * @return returns an <code>Iterator</code> of subtitles.
+     * @pre isPremiumVideo(videoID)
      */
-    Iterator<SubtitleImpl> getSubtitles(String videoID);
+    java.util.Iterator<SubtitleImpl> getSubtitles(String videoID);
 
     /**
      * Returns a podcast.
@@ -204,19 +203,21 @@ public interface StreamingPlatform {
 
     /**
      * Returns an iterator with all episodes of a podcast in reverse chronological order.
-     * @pre hasPodcast(title)
+     *
      * @param title - the title of the podcast.
      * @return returns an <code>Iterator</code> of podcast episodes.
+     * @pre hasPodcast(title)
      */
-    Iterator<PodcastEpisode> getPodcastEpisodes(String title);
+    java.util.Iterator<PodcastEpisode> getPodcastEpisodes(String title);
 
     /**
      * Returns an iterator with all podcasts created by a specific author.
-     * @pre hasAuthorPodcasts(author)
+     *
      * @param author - the name of the author.
      * @return returns an <code>Iterator</code> of podcasts.
+     * @pre hasAuthorPodcasts(author)
      */
-    Iterator<Podcast> getAuthorPodcasts(String author);
+    java.util.Iterator<Podcast> getAuthorPodcasts(String author);
 
     /**
      * Returns a show.
