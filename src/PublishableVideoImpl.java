@@ -49,7 +49,6 @@ public class PublishableVideoImpl extends AbstractVideo implements PublishableVi
         } else if (obj instanceof PublishableVideoImpl that) {
             isEqual = getVideoID().equalsIgnoreCase(that.getVideoID());
         }
-
         return isEqual;
     }
 

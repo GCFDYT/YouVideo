@@ -318,8 +318,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
                 productiveAuthors.add(a);
             }
         }
-        
-        // Sort primarily by productivity count (descending), using alphabetical author names as a tie-breaker
+
         productiveAuthors.sort(Comparator
                 .comparingInt(Author::getProductivity).reversed()
                 .thenComparing(Author::getName, String.CASE_INSENSITIVE_ORDER)
@@ -336,7 +335,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private List<TaggableContent> buildTaggedContentList(String tag, String filter) {
         List<TaggableContent> result = new ArrayList<>();
 
-        // Populate shows if filter includes ALL or SHOW
         if (filter.equals("ALL") || filter.equals("SHOW")) {
             for (Show s : shows.values()) {
                 if (s.hasTag(tag)) {
@@ -345,7 +343,6 @@ public class StreamingPlatformImpl implements StreamingPlatform {
             }
         }
 
-        // Populate podcasts if filter includes ALL or PODCAST
         if (filter.equals("ALL") || filter.equals("PODCAST")) {
             for (Podcast p : podcasts.values()) {
                 if (p.hasTag(tag)) {
