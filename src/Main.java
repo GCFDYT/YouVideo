@@ -332,9 +332,15 @@ public class Main {
                 System.out.printf(VIDEO_DISPLAY, video.getVideoID(),
                         video.getVideoDuration(), video.getTitle());
             }
+
             Locale locale = Locale.of(video.getLanguageCode());
+            String displayLang = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
+
+            if (displayLang.equals("FULA")) {
+                displayLang = "FULAH";
+            }
             System.out.printf(VIDEO_FILE_INFO, video.getUrl(), video.getPublisher(),
-                    locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase());
+                    displayLang);
         }
     }
 
@@ -359,8 +365,13 @@ public class Main {
             while (it.hasNext()) {
                 SubtitleImpl subtitleImpl = it.next();
                 Locale locale = Locale.of(subtitleImpl.getSubtitleLanguage());
+                String displayLang = locale.getDisplayLanguage().toUpperCase();
+
+                if (displayLang.equals("FULA")) {
+                    displayLang = "FULAH";
+                }
                 System.out.printf(SUBTITLE_ENTRY + "%n", subtitleImpl.getSubtitleUrl(),
-                        locale.getDisplayLanguage().toUpperCase());
+                        displayLang);
             }
         }
     }
