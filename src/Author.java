@@ -1,47 +1,58 @@
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Represents an author in the system, responsible for creating shows and podcasts.
- * Each author has a name and lists of shows and podcasts they have created.
+ * Represents an author in the streaming platform.
+ * An author can create shows and podcasts.
+ *
  * @author Gonçalo Domingos and João Domingues
  */
-public class Author {
-    private final String name;
-    private final ArrayList<Show> shows;
-    private final ArrayList<Podcast> podcasts;
+public interface Author {
 
-    public Author(String name) {
-        this.name = name;
-        this.shows = new ArrayList<>();
-        this.podcasts = new ArrayList<>();
-    }
+    /**
+     * Returns the name of the author.
+     * @return the author's name
+     */
+    String getName();
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * Returns the total productivity count (number of shows + podcasts).
+     * @return total contributions
+     */
+    int getProductivity();
 
-    public int getProductivity() {
-        return shows.size() + podcasts.size();
-    }
+    /**
+     * Adds a show to this author's list.
+     * @param show the show to add
+     */
+    void addShow(Show show);
 
-    public void addShow(Show show) {
-        shows.add(show);
-    }
+    /**
+     * Adds a podcast to this author's list.
+     * @param podcast the podcast to add
+     */
+    void addPodcast(Podcast podcast);
 
-    public void addPodcast(Podcast podcast) {
-        podcasts.add(podcast);
-    }
+    /**
+     * Returns an iterator over the author's podcasts.
+     * @return iterator of podcasts
+     */
+    Iterator<Podcast> getPodcasts();
 
-    public Iterator<Podcast> getPodcasts() {
-        return podcasts.iterator();
-    }
+    /**
+     * Returns an iterator over the author's shows.
+     * @return iterator of shows
+     */
+    Iterator<Show> getShows();
 
-    public void removeShow(Show show) {
-        shows.remove(show);
-    }
+    /**
+     * Removes a show from this author's list.
+     * @param show the show to remove
+     */
+    void removeShow(Show show);
 
-    public void removePodcast(Podcast podcast) {
-        podcasts.remove(podcast);
-    }
+    /**
+     * Removes a podcast from this author's list.
+     * @param podcast the podcast to remove
+     */
+    void removePodcast(Podcast podcast);
 }

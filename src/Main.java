@@ -20,6 +20,7 @@ public class Main {
     private static final String DISPLAY_PODCAST_DATA = "getpodcast";
     private static final String DISPLAY_PODCAST_EPISODE_LIST = "episodes";
     private static final String DISPLAY_AUTHOR_PODCAST_LIST = "authorpodcasts";
+    private static final String DISPLAY_AUTHOR_SHOWS_LIST = "authorshows";
     private static final String DELETE_PODCAST = "removepodcast";
     private static final String CREATE_SHOW = "createshow";
     private static final String DISPLAY_SHOW_DATA = "getshow";
@@ -89,6 +90,10 @@ public class Main {
     private static final String SHOW_VIDEO = "Video: %s";
     private static final String SHOW_FALSE = "Show does not exist.";
     private static final String SHOW_REMOVED = "Show removed successfully.";
+    private static final String AUTHOR_SHOWS_HEADER = "Shows by author %s:";
+    private static final String NO_USER_SHOWS = "No shows found for this author.";
+    private static final String SHOW_ENTRY_FORMAT = "Date: %s Show: %s " +
+            "Duration: %d Language: %s%n";
 
     private static final String TAG_ADDED = "Tag added successfully.";
     private static final String TAG_REMOVED = "Tag removed successfully.";
@@ -193,8 +198,7 @@ public class Main {
         do {
             command = scanner.next();
 
-            String lowerCommand = command.toLowerCase();
-            switch (lowerCommand) {
+            switch (command.toLowerCase()) {
                 case CREATE_PUBLISHABLE_VIDEO -> createPublishableVideo(scanner, platform);
                 case CREATE_PREMIUM_VIDEO -> createPremiumVideo(scanner, platform);
                 case ADD_SUBTITLES_PREMIUM_VIDEO -> createSubtitle(scanner, platform);
@@ -214,6 +218,7 @@ public class Main {
                 case ADD_TAG -> addTag(scanner, platform);
                 case REMOVE_TAG -> removeTag(scanner, platform);
                 case TAGGED -> displayTaggedContent(scanner, platform);
+                case DISPLAY_AUTHOR_SHOWS_LIST -> displayAuthorShowsList(scanner, platform);
                 case DISPLAY_CMD_LIST -> printAllCommands();
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
                 default -> System.out.println(CMD_ERR);
@@ -517,6 +522,35 @@ public class Main {
                 Podcast podcast = iterator.next();
                 System.out.printf(PODCAST_ENTRY + "%n", podcast.getTitle(),
                         podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
+            }
+        }
+    }
+
+    /**
+     * Displays all shows managed by a given author.
+     * The shows are displayed with their date, title, duration, and language.
+     * If the author has no shows, a message indicating no shows found is displayed.
+     *
+     * @param scanner the scanner used to read user input
+     * @param platform the streaming platform instance to operate on
+     * @pre scanner != null
+     * @pre platform != null
+     */
+    private static void displayAuthorShowsList(Scanner scanner, StreamingPlatform platform) {
+        String author = readLine(scanner);
+
+        if (!platform.hasAuthorShows(author)) {
+            System.out.println(NO_USER_SHOWS);
+        } else {
+            System.out.printf(AUTHOR_SHOWS_HEADER + "%n", author);
+
+            Iterator<Show> iterator = platform.getAuthorShows(author);
+            while (iterator.hasNext()) {
+                Show show = iterator.next();
+                PublishableVideo video = platform.getVideo(show.getVideoID());
+                System.out.printf(SHOW_ENTRY_FORMAT,
+                        show.getDate(), video.getTitle(), video.getVideoDuration(),
+                        video.getLanguageCode().toUpperCase());
             }
         }
     }

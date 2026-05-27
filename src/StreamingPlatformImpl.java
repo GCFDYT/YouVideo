@@ -17,7 +17,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     private final Map<String, PublishableVideo> publishableVideos;
     private final Map<String, Podcast> podcasts;
     private final Map<String, Show> shows;
-    private final Map<String, Author> authorsMap;
+    private final Map<String, AuthorImpl> authorsMap;
 
     /**
      * Initializes the streaming platform with empty collections for videos, podcasts, shows, and authors.
@@ -61,10 +61,10 @@ public class StreamingPlatformImpl implements StreamingPlatform {
      * @param name - the name of the author.
      * @return returns the Author object associated with the given name.
      */
-    private Author getOrCreateAuthor(String name) {
+    private AuthorImpl getOrCreateAuthor(String name) {
         String key = name.toLowerCase();
         if (!authorsMap.containsKey(key)) {
-            authorsMap.put(key, new Author(name));
+            authorsMap.put(key, new AuthorImpl(name));
         }
         return authorsMap.get(key);
     }
@@ -163,7 +163,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
     @Override
     public boolean hasProductiveAuthors() {
         boolean hasProductive = false;
-        Iterator<Author> authorIterator = authorsMap.values().iterator();
+        Iterator<AuthorImpl> authorIterator = authorsMap.values().iterator();
 
         while (!hasProductive && authorIterator.hasNext()) {
             hasProductive = authorIterator.next().getProductivity() > 0;
@@ -181,6 +181,35 @@ public class StreamingPlatformImpl implements StreamingPlatform {
         boolean sTagged = (s != null && s.hasTag(normalizedTag));
 
         return pTagged || sTagged;
+    }
+
+    @Override
+    public boolean hasAuthorShows(String author) {
+        Author a = authorsMap.get(author.toLowerCase());
+        return a != null && a.getShows().hasNext();
+    }
+
+    @Override
+    public Iterator<Show> getAuthorShows(String author) {
+        Author a = authorsMap.get(author.toLowerCase());
+        List<Show> result = new ArrayList<>();
+
+        if (a != null) {
+            Iterator<Show> it = a.getShows();
+            while (it.hasNext()) {
+                result.add(it.next());
+            }
+            result.sort((s1, s2) -> {
+                int dateCompare = s1.getDate().compareTo(s2.getDate());
+                int compareResult = dateCompare;
+                if (dateCompare == 0) {
+                    compareResult = s1.getTitle().compareToIgnoreCase(s2.getTitle());
+                }
+                return compareResult;
+            });
+        }
+
+        return result.iterator();
     }
 
     @Override

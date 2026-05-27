@@ -103,6 +103,20 @@ public interface StreamingPlatform {
     boolean isTitleTaggedWith(String title, String tag);
 
     /**
+     * Checks if an author has any shows.
+     * @param author the author's name
+     * @return true if the author has at least one show, false otherwise
+     */
+    boolean hasAuthorShows(String author);
+
+    /**
+     * Returns an iterator over all shows of a given author.
+     * @param author the author's name
+     * @return iterator of shows
+     */
+    Iterator<Show> getAuthorShows(String author);
+
+    /**
      * Adds a new standard publishable video to the platform.
      * @param videoID - the unique identifier for the video.
      * @param videoDuration - the duration of the video.
