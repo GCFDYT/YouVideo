@@ -152,6 +152,12 @@ public class Main {
         return line != null ? line.trim() : "";
     }
 
+    /**
+     * Displays the complete list of available commands and their descriptions.
+     * Each command is printed on a separate line, followed by a blank line
+     * to separate the command list from subsequent output.
+     * This method is called when the user enters the "help" command.
+     */
     private static void printAllCommands() {
         System.out.println("createpublishable - creates a new publishable video");
         System.out.println("createpremium - creates a new publishable Premium video");
@@ -174,7 +180,8 @@ public class Main {
         System.out.println("removetag - removes a tag from a show or podcast");
         System.out.println("tagged - List content tagged with a given tag");
         System.out.println("help - shows the available commands");
-        System.out.print("exit - terminates the execution of the program");
+        System.out.println("exit - terminates the execution of the program");
+        System.out.println();
     }
 
     /**
