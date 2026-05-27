@@ -5,7 +5,7 @@
  * @author Gonçalo Domingos and João Domingues
  */
 public class ShowImpl extends AbstractTaggableContent implements Show {
-    
+
     private final String videoID;
     private final String date;
 
@@ -16,13 +16,28 @@ public class ShowImpl extends AbstractTaggableContent implements Show {
     }
 
     @Override
-    public String getVideoID() { 
+    public String getVideoID() {
         return videoID;
     }
 
     @Override
-    public String getDate() { 
+    public String getDate() {
         return date;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean isEqual = false;
+        if (this == obj) {
+            isEqual = true;
+        } else if (obj instanceof ShowImpl that) {
+            isEqual = this.getTitle().equalsIgnoreCase(that.getTitle());
+        }
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return getTitle().toLowerCase().hashCode();
+    }
 }

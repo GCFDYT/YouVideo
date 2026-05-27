@@ -24,18 +24,18 @@ public class Main {
     private static final String CREATE_SHOW = "createshow";
     private static final String DISPLAY_SHOW_DATA = "getshow";
     private static final String DELETE_SHOW = "removeshow";
-    
+
     private static final String AUTHORS_PRODUCTIVITY = "authorsproductivity";
     private static final String ADD_TAG = "addtag";
     private static final String REMOVE_TAG = "removetag";
     private static final String TAGGED = "tagged";
-    
+
     private static final String DISPLAY_CMD_LIST = "help";
     private static final String EXIT_PROGRAM = "exit";
 
     private static final String CMD_ERR = "Unknown command. Type help to see available commands.";
-    private static final String AVAILABLE_CMDS = "Available commands...";
     private static final String EXIT_MSG = "Bye!";
+
     private static final String VIDEO_CREATED = "Video %s created successfully.";
     private static final String PREMIUM_VIDEO_CREATED = "PREMIUM Video %s created successfully.";
     private static final String VIDEO_DISPLAY = "Video %s %d Title: %s%n";
@@ -53,10 +53,10 @@ public class Main {
     private static final String SUBTITLES_HEADER = "Subtitles for video %s:";
     private static final String SUBTITLE_ENTRY = "- %s (%s)";
     private static final String VIDEO_REMOVED = "Video removed successfully.";
-    private static final String NO_REMOVE = "Cannot remove: ";
-    private static final String CANT_REMOVE_EPISODE = NO_REMOVE +
+    private static final String CANT_REMOVE_EPISODE = "Cannot remove: " +
             "video is an episode of a podcast.";
-    private static final String CANT_REMOVE_USED_VIDEO = NO_REMOVE + "video is used in a show.";
+    private static final String CANT_REMOVE_USED_VIDEO = "Cannot remove: " +
+            "video is used in a show.";
 
     private static final String TYPE_PODCAST = "Podcast";
     private static final String PODCAST_CREATED = "Podcast created successfully.";
@@ -89,7 +89,7 @@ public class Main {
     private static final String SHOW_VIDEO = "Video: %s";
     private static final String SHOW_FALSE = "Show does not exist.";
     private static final String SHOW_REMOVED = "Show removed successfully.";
-    
+
     private static final String TAG_ADDED = "Tag added successfully.";
     private static final String TAG_REMOVED = "Tag removed successfully.";
     private static final String TITLE_NOT_FOUND = "Title does not exist.";
@@ -152,6 +152,31 @@ public class Main {
         return line != null ? line.trim() : "";
     }
 
+    private static void printAllCommands() {
+        System.out.println("createpublishable - creates a new publishable video");
+        System.out.println("createpremium - creates a new publishable Premium video");
+        System.out.println("addsubtitle - adds subtitle to Premium video");
+        System.out.println("getvideo - presents publishable video data from its id");
+        System.out.println("subtitles - Lists Premium video subtitles");
+        System.out.println("createpodcast - creates a new podcast with no episodes");
+        System.out.println("addepisode - adds an episode to a podcast");
+        System.out.println("getpodcast - presents podcast data from its title");
+        System.out.println("episodes - List podcast episodes");
+        System.out.println("authorpodcasts - List all podcasts of an author");
+        System.out.println("removepodcast - removes a podcast");
+        System.out.println("createshow - creates show using an existing publishable video");
+        System.out.println("getshow - presents show data from its title");
+        System.out.println("authorshows - List all shows of an author");
+        System.out.println("removeshow - removes a show");
+        System.out.println("removevideo - removes a publishable video");
+        System.out.println("authorsproductivity - List authors by their productivity");
+        System.out.println("addtag - adds a tag to a show or podcast");
+        System.out.println("removetag - removes a tag from a show or podcast");
+        System.out.println("tagged - List content tagged with a given tag");
+        System.out.println("help - shows the available commands");
+        System.out.print("exit - terminates the execution of the program");
+    }
+
     /**
      * Executes the main program loop, processing commands until the exit command is received.
      * @param scanner - the scanner used to read user input.
@@ -163,7 +188,9 @@ public class Main {
         String command;
         do {
             command = scanner.next();
-            switch (command.toLowerCase()) {
+
+            String lowerCommand = command.toLowerCase();
+            switch (lowerCommand) {
                 case CREATE_PUBLISHABLE_VIDEO -> createPublishableVideo(scanner, platform);
                 case CREATE_PREMIUM_VIDEO -> createPremiumVideo(scanner, platform);
                 case ADD_SUBTITLES_PREMIUM_VIDEO -> createSubtitle(scanner, platform);
@@ -183,13 +210,13 @@ public class Main {
                 case ADD_TAG -> addTag(scanner, platform);
                 case REMOVE_TAG -> removeTag(scanner, platform);
                 case TAGGED -> displayTaggedContent(scanner, platform);
-                case DISPLAY_CMD_LIST -> System.out.println(AVAILABLE_CMDS);
+                case DISPLAY_CMD_LIST -> printAllCommands();
                 case EXIT_PROGRAM -> System.out.println(EXIT_MSG);
                 default -> System.out.println(CMD_ERR);
             }
         } while (!EXIT_PROGRAM.equalsIgnoreCase(command));
     }
-    
+
     /**
      * Handles the creation of a standard publishable video.
      * @param scanner - the scanner used to read user input.
@@ -421,7 +448,7 @@ public class Main {
             Podcast podcast = platform.getPodcast(title);
             System.out.printf(PODCAST_INFO + "%n", podcast.getTitle(),
                     podcast.getAuthor(), podcast.getLanguageCode().toUpperCase());
-            
+
             if (podcast.hasEpisodes()) {
                 System.out.printf(PODCAST_LATEST_EPISODE + "%n",
                         podcast.getLatestEpisode().getDate());
@@ -548,7 +575,7 @@ public class Main {
             System.out.println(SHOW_FALSE);
         } else {
             Show show = platform.getShow(title);
-            System.out.printf(SHOW_INFO + "%n", show.getDate(), show.getAuthor()); 
+            System.out.printf(SHOW_INFO + "%n", show.getDate(), show.getAuthor());
             PublishableVideo video = platform.getVideo(show.getVideoID());
             System.out.printf(SHOW_VIDEO + "%n", video.getTitle());
 
@@ -588,14 +615,15 @@ public class Main {
     private static void displayAuthorsProductivity(StreamingPlatform platform) {
         if (!platform.hasProductiveAuthors()) {
             System.out.println(NO_PRODUCTIVE_AUTHORS);
+            return;
         }
-        
+
         System.out.println(AUTHORS_PRODUCTIVITY_HEADER);
         Iterator<Author> it = platform.getAuthorsByProductivity();
         while (it.hasNext()) {
             Author author = it.next();
             System.out.printf(AUTHOR_CONTRIBUTIONS_FORMAT,
-                author.getName(), author.getProductivity());
+                    author.getName(), author.getProductivity());
         }
     }
 
@@ -660,12 +688,14 @@ public class Main {
 
         if (!validFilter || !validOrder) {
             System.out.println(INVALID_TAG_PARAMS);
+            return;
         }
 
         Iterator<TaggableContent> it = platform.getTaggedContent(tag, filter, order);
 
         if (!it.hasNext()) {
             System.out.printf(NO_TAGGED_CONTENT, tag);
+            return;
         }
 
         String orderText = order.equals("ASC") ? ORDER_ASCENDING : ORDER_DESCENDING;
