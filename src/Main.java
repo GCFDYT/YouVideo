@@ -153,34 +153,32 @@ public class Main {
     }
 
     /**
-     * Displays the complete list of available commands and their descriptions.
-     * Each command is printed on a separate line, followed by a blank line
-     * to separate the command list from subsequent output.
-     * This method is called when the user enters the "help" command.
+     * Prints the help menu with all available commands and their descriptions.
+     * This method is invoked when the user types the "help" command.
      */
     private static void printAllCommands() {
-        System.out.println("createpublishable - creates a new publishable video");
-        System.out.println("createpremium - creates a new publishable Premium video");
-        System.out.println("addsubtitle - adds subtitle to Premium video");
-        System.out.println("getvideo - presents publishable video data from its id");
-        System.out.println("subtitles - Lists Premium video subtitles");
-        System.out.println("createpodcast - creates a new podcast with no episodes");
-        System.out.println("addepisode - adds an episode to a podcast");
-        System.out.println("getpodcast - presents podcast data from its title");
-        System.out.println("episodes - List podcast episodes");
-        System.out.println("authorpodcasts - List all podcasts of an author");
-        System.out.println("removepodcast - removes a podcast");
-        System.out.println("createshow - creates show using an existing publishable video");
-        System.out.println("getshow - presents show data from its title");
-        System.out.println("authorshows - List all shows of an author");
-        System.out.println("removeshow - removes a show");
-        System.out.println("removevideo - removes a publishable video");
-        System.out.println("authorsproductivity - List authors by their productivity");
-        System.out.println("addtag - adds a tag to a show or podcast");
-        System.out.println("removetag - removes a tag from a show or podcast");
-        System.out.println("tagged - List content tagged with a given tag");
-        System.out.println("help - shows the available commands");
-        System.out.println("exit - terminates the execution of the program");
+        System.out.printf("createpublishable - creates a new publishable video%n" +
+                "createpremium - creates a new publishable Premium video%n" +
+                "addsubtitle - adds subtitle to Premium video%n" +
+                "getvideo - presents publishable video data from its id%n" +
+                "subtitles - Lists Premium video subtitles%n" +
+                "createpodcast - creates a new podcast with no episodes%n" +
+                "addepisode - adds an episode to a podcast%n" +
+                "getpodcast - presents podcast data from its title%n" +
+                "episodes - List podcast episodes%n" +
+                "authorpodcasts - List all podcasts of an author%n" +
+                "removepodcast - removes a podcast%n" +
+                "createshow - creates show using an existing publishable video%n" +
+                "getshow - presents show data from its title%n" +
+                "authorshows - List all shows of an author%n" +
+                "removeshow - removes a show%n" +
+                "removevideo - removes a publishable video%n" +
+                "authorsproductivity - List authors by their productivity%n" +
+                "addtag - adds a tag to a show or podcast%n" +
+                "removetag - removes a tag from a show or podcast%n" +
+                "tagged - List content tagged with a given tag%n" +
+                "help - shows the available commands%n" +
+                "exit - terminates the execution of the program%n");
     }
 
     /**
