@@ -173,16 +173,14 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public boolean isTitleTaggedWith(String title, String tag) {
-        String normalizedTag = tag.toLowerCase();
         Podcast p = findPodcast(title);
         Show s = findShow(title);
 
-        boolean pTagged = (p != null && p.hasTag(normalizedTag));
-        boolean sTagged = (s != null && s.hasTag(normalizedTag));
+        boolean pTagged = (p != null && p.hasTag(tag));
+        boolean sTagged = (s != null && s.hasTag(tag));
 
         return pTagged || sTagged;
     }
-
     @Override
     public boolean hasAuthorShows(String author) {
         Author a = authorsMap.get(author.toLowerCase());
@@ -297,29 +295,27 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public void addTagToTitle(String title, String tag) {
-        String normalizedTag = tag.toLowerCase();
         Podcast p = findPodcast(title);
         if (p != null) {
-            p.addTag(normalizedTag);
+            p.addTag(tag);
         }
 
         Show s = findShow(title);
         if (s != null) {
-            s.addTag(normalizedTag);
+            s.addTag(tag);
         }
     }
 
     @Override
     public void removeTagFromTitle(String title, String tag) {
-        String normalizedTag = tag.toLowerCase();
         Podcast p = findPodcast(title);
         if (p != null) {
-            p.removeTag(normalizedTag);
+            p.removeTag(tag);
         }
 
         Show s = findShow(title);
         if (s != null) {
-            s.removeTag(normalizedTag);
+            s.removeTag(tag);
         }
     }
 
@@ -397,12 +393,11 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
     @Override
     public Iterator<TaggableContent> getTaggedContent(String tag, String filter, String order) {
-        String normalizedTag = tag.toLowerCase();
         List<TaggableContent> result = new ArrayList<>();
 
         if (filter.equals("ALL") || filter.equals("SHOW")) {
             for (Show s : shows.values()) {
-                if (s.hasTag(normalizedTag)) {
+                if (s.hasTag(tag)) {
                     result.add(s);
                 }
             }
@@ -410,7 +405,7 @@ public class StreamingPlatformImpl implements StreamingPlatform {
 
         if (filter.equals("ALL") || filter.equals("PODCAST")) {
             for (Podcast p : podcasts.values()) {
-                if (p.hasTag(normalizedTag)) {
+                if (p.hasTag(tag)) {
                     result.add(p);
                 }
             }

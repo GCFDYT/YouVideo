@@ -718,7 +718,6 @@ public class Main {
         String tag = scanner.next();
         String filter = scanner.next().toUpperCase();
         String order = scanner.next().toUpperCase();
-        consumeLine(scanner);
 
         boolean validFilter = filter.equals("ALL") || filter.equals("SHOW")
                 || filter.equals("PODCAST");
