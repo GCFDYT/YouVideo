@@ -181,7 +181,6 @@ public class Main {
         System.out.println("tagged - List content tagged with a given tag");
         System.out.println("help - shows the available commands");
         System.out.println("exit - terminates the execution of the program");
-        System.out.println();
     }
 
     /**
